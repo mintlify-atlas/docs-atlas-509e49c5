@@ -1,0 +1,102 @@
+{
+  "projectType": "saas",
+  "projectName": "NoBadFonts",
+  "projectDescription": "A curated font discovery platform with context-aware testing, font pairing tools, and seamless integration for designers and developers.",
+  "theme": "willow",
+  "primaryColor": "#040404",
+  "lightColor": "#fcfcfc",
+  "darkColor": "#7c7c7c",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["introduction", "quickstart"]
+          },
+          {
+            "group": "Platform Features",
+            "pages": [
+              "features/font-catalog",
+              "features/font-tester",
+              "features/font-pairing",
+              "features/upload-system",
+              "features/mobile-apps"
+            ]
+          },
+          {
+            "group": "For Developers",
+            "pages": [
+              "developers/setup",
+              "developers/database-schema",
+              "developers/authentication",
+              "developers/contributing"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "CLI Reference",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": ["cli/installation", "cli/quickstart"]
+          },
+          {
+            "group": "Commands",
+            "pages": [
+              "cli/commands/add",
+              "cli/commands/download",
+              "cli/commands/list"
+            ]
+          },
+          {
+            "group": "Advanced",
+            "pages": ["cli/configuration", "cli/troubleshooting"]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Core Concepts",
+            "pages": ["api/overview", "api/authentication"]
+          },
+          {
+            "group": "Resources",
+            "pages": [
+              "api/fonts",
+              "api/font-variants",
+              "api/profiles"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Curated font library with quality filtering",
+    "Context-aware font tester (UI, Editorial, Code)",
+    "Font pairing tool with live preview",
+    "WASM-powered WOFF2 conversion in-browser",
+    "CLI for instant font installation",
+    "Mobile apps via Capacitor",
+    "User uploads with admin curation",
+    "Algorithmic font descriptions"
+  ],
+  "publicApiSurface": [
+    "Web App: Font catalog with filtering and search",
+    "Web App: Font detail pages with previews and downloads",
+    "Web App: Font tester with multiple contexts",
+    "Web App: Font pairing tool",
+    "Web App: Upload pipeline for new fonts",
+    "CLI: nobadfonts add <font-name>",
+    "CLI: nobadfonts download <font-name>",
+    "CLI: nobadfonts list",
+    "API: GET /fonts - List all fonts",
+    "API: GET /fonts?slug=<slug> - Get font details",
+    "API: GET /font_variants - List font variants"
+  ]
+}
