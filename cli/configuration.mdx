@@ -1,0 +1,292 @@
+---
+title: 'Configuration'
+description: 'Configure environment variables and settings for the NoBadFonts CLI'
+icon: 'gear'
+---
+
+## Overview
+
+The NoBadFonts CLI requires environment variables to connect to the NoBadFonts API. These variables authenticate your requests and specify the database endpoint.
+
+## Required Environment Variables
+
+The CLI reads configuration from environment variables using the `dotenv` package.
+
+<ParamField path="SUPABASE_URL" type="string" required>
+  The Supabase project URL endpoint for the NoBadFonts database.
+  
+  **Format:** `https://your-project.supabase.co`
+</ParamField>
+
+<ParamField path="SUPABASE_ANON_KEY" type="string" required>
+  The Supabase anonymous (public) API key for authentication.
+  
+  **Format:** Long base64-encoded JWT token
+</ParamField>
+
+## Setup Methods
+
+### Method 1: .env File (Recommended)
+
+Create a `.env` file in your project root:
+
+```bash .env
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+<Steps>
+  <Step title="Create .env file">
+    In your project root directory:
+    
+    ```bash
+    touch .env
+    ```
+  </Step>
+  
+  <Step title="Add credentials">
+    Open `.env` and add both variables:
+    
+    ```bash
+    SUPABASE_URL=your_url_here
+    SUPABASE_ANON_KEY=your_key_here
+    ```
+  </Step>
+  
+  <Step title="Add to .gitignore">
+    Prevent committing secrets:
+    
+    ```bash
+    echo ".env" >> .gitignore
+    ```
+  </Step>
+</Steps>
+
+<Warning>
+Never commit your `.env` file to version control. Always add it to `.gitignore`.
+</Warning>
+
+### Method 2: System Environment Variables
+
+Set environment variables in your shell:
+
+<CodeGroup>
+
+```bash macOS/Linux
+export SUPABASE_URL="https://your-project.supabase.co"
+export SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+```bash Windows (PowerShell)
+$env:SUPABASE_URL="https://your-project.supabase.co"
+$env:SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+```bash Windows (Command Prompt)
+set SUPABASE_URL=https://your-project.supabase.co
+set SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+</CodeGroup>
+
+### Method 3: Shell Profile (Persistent)
+
+For persistent configuration across terminal sessions:
+
+<CodeGroup>
+
+```bash ~/.bashrc or ~/.zshrc
+# NoBadFonts CLI Configuration
+export SUPABASE_URL="https://your-project.supabase.co"
+export SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+```bash ~/.bash_profile
+# NoBadFonts CLI Configuration
+export SUPABASE_URL="https://your-project.supabase.co"
+export SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+</CodeGroup>
+
+After editing, reload your shell configuration:
+
+```bash
+source ~/.bashrc  # or ~/.zshrc, ~/.bash_profile
+```
+
+## How the CLI Loads Configuration
+
+The CLI loads environment variables using this priority order:
+
+1. **System environment variables** (highest priority)
+2. **.env file** in the current working directory
+3. **Default values** (none - will fail if not set)
+
+<Note>
+The CLI uses the `dotenv` package with the configuration `import 'dotenv/config'`, which automatically loads `.env` files at startup.
+</Note>
+
+## Verifying Configuration
+
+Test that your environment variables are set correctly:
+
+### Check Variables (Unix/Linux/macOS)
+
+```bash
+echo $SUPABASE_URL
+echo $SUPABASE_ANON_KEY
+```
+
+### Check Variables (Windows PowerShell)
+
+```bash
+echo $env:SUPABASE_URL
+echo $env:SUPABASE_ANON_KEY
+```
+
+### Test CLI Connection
+
+Run the list command to verify API connectivity:
+
+```bash
+npx nobadfonts list
+```
+
+Successful output indicates correct configuration.
+
+## Configuration Errors
+
+### Missing Environment Variables
+
+If variables aren't set, you'll see:
+
+```bash
+⠋ Fetching available fonts...
+✖ Error fetching fonts: Failed to fetch
+```
+
+Or in the browser console:
+
+```
+Undefined SUPABASE_URL or SUPABASE_ANON_KEY
+```
+
+### Invalid URL Format
+
+Supabase URLs must follow this format:
+
+```
+https://[project-id].supabase.co
+```
+
+**Common mistakes:**
+- Missing `https://`
+- Trailing slash `/`
+- Wrong domain (not `.supabase.co`)
+
+### Invalid API Key
+
+Supabase anonymous keys are JWT tokens. If invalid:
+
+```bash
+⠋ Fetching available fonts...
+✖ Error fetching fonts: 401 Unauthorized
+```
+
+## Security Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Never Commit Secrets" icon="lock">
+    Always add `.env` to `.gitignore` before committing
+  </Card>
+  <Card title="Use Anonymous Key" icon="key">
+    Use the public anonymous key, not service role key
+  </Card>
+  <Card title="Rotate Keys Regularly" icon="rotate">
+    Regenerate API keys periodically in Supabase dashboard
+  </Card>
+  <Card title="Limit Access" icon="shield">
+    Configure Row Level Security (RLS) policies in Supabase
+  </Card>
+</CardGroup>
+
+<Warning>
+**Never use the service role key** in the CLI. It has full admin access and should only be used in secure server environments.
+</Warning>
+
+## Project-Specific Configuration
+
+For teams working with multiple projects:
+
+### Create .env.example
+
+Provide a template for other developers:
+
+```bash .env.example
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your_key_here
+```
+
+Commit `.env.example` to version control (without real values).
+
+### Document Setup Steps
+
+In your project README:
+
+```markdown README.md
+## Setup
+
+1. Copy `.env.example` to `.env`
+2. Add your Supabase credentials to `.env`
+3. Run `npx nobadfonts list` to verify connection
+```
+
+## CI/CD Configuration
+
+For GitHub Actions, Vercel, or other CI/CD platforms:
+
+### GitHub Actions
+
+```yaml .github/workflows/fonts.yml
+name: Install Fonts
+
+on: [push]
+
+jobs:
+  fonts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Install fonts
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          npx nobadfonts add "Inter"
+```
+
+Add secrets in GitHub repository settings: **Settings → Secrets → Actions**
+
+### Vercel
+
+Add environment variables in project settings:
+1. Go to project settings
+2. Navigate to **Environment Variables**
+3. Add `SUPABASE_URL` and `SUPABASE_ANON_KEY`
+
+## Troubleshooting
+
+See the [Troubleshooting](/cli/troubleshooting) page for common configuration issues and solutions.
+
+## See Also
+
+<CardGroup cols={2}>
+  <Card title="Installation" icon="download" href="/cli/installation">
+    Install the CLI tool
+  </Card>
+  <Card title="Troubleshooting" icon="wrench" href="/cli/troubleshooting">
+    Fix common issues
+  </Card>
+</CardGroup>

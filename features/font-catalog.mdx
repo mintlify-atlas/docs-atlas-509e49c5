@@ -1,0 +1,141 @@
+---
+title: Font catalog
+description: Browse and discover thousands of high-quality fonts with advanced filtering and search
+---
+
+The font catalog is the heart of NoBadFonts, offering a curated collection of premium typefaces optimized for modern interfaces.
+
+## Browse fonts
+
+The catalog displays fonts in a responsive masonry grid layout that adapts to your screen size:
+
+- **Desktop**: 4-column grid for maximum visibility
+- **Tablet**: 3-column grid for balanced browsing
+- **Mobile**: 2-column grid for comfortable viewing
+
+Each font card shows:
+- Font name and designer
+- Live preview with customizable text
+- Category tags
+- Favorite count
+- Quick actions (like, share, download)
+
+## Search and filter
+
+### Text search
+
+Search for fonts by name, designer, or style using the search bar at the top of the catalog. The search updates results in real-time as you type.
+
+### Category filters
+
+Filter fonts by multiple categories simultaneously:
+
+<AccordionGroup>
+  <Accordion title="Classification">
+    - Sans
+    - Serif
+    - Slab Serif
+    - Display
+    - Monospace
+    - Script
+    - Calligraphy
+    - Brush
+    - Handwritten
+    - Signature
+  </Accordion>
+
+  <Accordion title="Style">
+    - Modern
+    - Classic
+    - Minimal
+    - Bold
+    - Elegant
+    - Luxury
+    - Playful
+    - Experimental
+    - Brutalist
+    - Geometric
+    - Organic
+  </Accordion>
+
+  <Accordion title="Use case">
+    - Branding
+    - Logo
+    - Headline
+    - Poster
+    - Corporate
+    - Tech / UI
+    - Social Media
+  </Accordion>
+</AccordionGroup>
+
+### Sort options
+
+Organize results by:
+- **Trending**: Most popular fonts based on views and downloads
+- **Popular**: Fonts with the most favorites
+- **Recent**: Newest additions to the catalog
+- **Name**: Alphabetical order
+
+## View modes
+
+Switch between different preview styles:
+
+<Tabs>
+  <Tab title="Card view">
+    Traditional grid layout with font cards showing name, preview, and metadata.
+  </Tab>
+  <Tab title="Custom text">
+    Preview all fonts with your own text. Type in the custom text field to see every font render your content in real-time.
+  </Tab>
+</Tabs>
+
+## Expand and collapse
+
+Control how much detail you see:
+
+- **Expand all**: See full previews of every font simultaneously
+- **Collapse all**: Show minimal cards for faster scanning
+- **Individual toggles**: Click any card to expand just that font
+
+## Infinite scroll
+
+The catalog loads fonts progressively as you scroll, ensuring fast initial page load while giving you access to the entire collection. New fonts load automatically 200px before you reach the bottom.
+
+## Performance features
+
+### Scroll position restoration
+
+When you navigate to a font details page and return to the catalog, your scroll position is automatically restored. Your filters and search terms are also preserved in the URL.
+
+### Optimized loading
+
+Fonts are loaded in batches of 16 to balance performance with browsing experience. The masonry layout recalculates dynamically to maintain optimal spacing.
+
+## Quick actions
+
+From any font card, you can:
+
+<CardGroup cols={2}>
+  <Card title="Favorite" icon="heart">
+    Save fonts to your personal collection for quick access later
+  </Card>
+  <Card title="Share" icon="share">
+    Generate social media cards or copy links to share fonts
+  </Card>
+  <Card title="View details" icon="eye">
+    Click any card to see the full font details page with tester and downloads
+  </Card>
+  <Card title="Download" icon="download">
+    One-click download of the font file (requires login)
+  </Card>
+</CardGroup>
+
+## URL parameters
+
+Your search and filter state is saved in the URL, making it easy to:
+- Bookmark specific searches
+- Share filtered views with others
+- Use browser back/forward to navigate your search history
+
+Example: `/fonts?query=geometric&categories=sans,modern&sortBy=trending`

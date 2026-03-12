@@ -1,0 +1,246 @@
+---
+title: 'Development Setup'
+description: 'Set up NoBadFonts locally for development'
+icon: 'code'
+---
+
+## Overview
+
+NoBadFonts is a modern React application built with Vite, TypeScript, and Supabase. This guide will walk you through setting up the development environment on your local machine.
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- **Node.js 20+** - JavaScript runtime
+- **npm or pnpm** - Package manager
+- **Git** - Version control
+
+## Installation
+
+<Steps>
+  <Step title="Clone the repository">
+    Clone the NoBadFonts repository to your local machine:
+
+    ```bash
+    git clone https://github.com/your-username/nobadfonts.git
+    cd nobadfonts
+    ```
+  </Step>
+
+  <Step title="Install dependencies">
+    Install all required dependencies using npm or pnpm:
+
+    <CodeGroup>
+      ```bash npm
+      npm install
+      ```
+
+      ```bash pnpm
+      pnpm install
+      ```
+    </CodeGroup>
+
+    <Note>
+      The project uses React 19, Vite 7, and Tailwind CSS v4. All dependencies are managed through the package manager.
+    </Note>
+  </Step>
+
+  <Step title="Configure environment variables">
+    Create a `.env` file in the root directory with your Supabase credentials:
+
+    ```env
+    VITE_SUPABASE_URL=your_supabase_project_url
+    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+    ```
+
+    <Warning>
+      Never commit your `.env` file to version control. The `.gitignore` file already excludes it.
+    </Warning>
+
+    ### Getting Supabase Credentials
+
+    1. Create a project at [supabase.com](https://supabase.com)
+    2. Navigate to **Project Settings** > **API**
+    3. Copy the **Project URL** and **anon/public key**
+  </Step>
+
+  <Step title="Start the development server">
+    Run the Vite development server:
+
+    ```bash
+    npm run dev
+    ```
+
+    The application will be available at `http://localhost:5173` with hot module replacement (HMR) enabled.
+  </Step>
+</Steps>
+
+## Build Commands
+
+### Development
+
+```bash
+npm run dev
+```
+
+Starts the Vite development server with instant HMR.
+
+### Production Build
+
+```bash
+npm run build
+```
+
+Compiles TypeScript and builds optimized production assets. The output is written to the `dist/` directory.
+
+<Note>
+  The build process runs TypeScript compilation (`tsc -b`) before bundling with Vite.
+</Note>
+
+### Preview Production Build
+
+```bash
+npm run preview
+```
+
+Serves the production build locally for testing.
+
+### Lint Code
+
+```bash
+npm run lint
+```
+
+Runs ESLint to check for code quality issues.
+
+### Generate Sitemap
+
+```bash
+npm run generate-sitemap
+```
+
+Generates a sitemap for SEO optimization.
+
+## Mobile Development (Capacitor)
+
+NoBadFonts supports native mobile development using Capacitor.
+
+### Android
+
+<Steps>
+  <Step title="Sync Capacitor">
+    ```bash
+    npx cap sync
+    ```
+  </Step>
+
+  <Step title="Open Android Studio">
+    ```bash
+    npx cap open android
+    ```
+  </Step>
+</Steps>
+
+<Note>
+  Ensure you have Android Studio installed with the Android SDK configured.
+</Note>
+
+## Project Structure
+
+The codebase follows a feature-based organization:
+
+```
+src/
+├── assets/          # Static assets
+├── components/      # React components
+│   ├── admin/      # Admin-only components
+│   ├── fonts/      # Font-related UI
+│   ├── home/       # Landing page sections
+│   ├── layout/     # Navigation, footer
+│   ├── profile/    # User profile components
+│   └── shared/     # Reusable components
+├── contexts/        # React Context providers
+├── hooks/           # Custom React hooks
+├── lib/             # Third-party integrations
+├── pages/           # Route components
+├── types/           # TypeScript definitions
+├── utils/           # Helper functions
+└── workers/         # Web Workers
+```
+
+## Tech Stack
+
+### Core Framework
+
+- **React 19** - UI library with latest features
+- **TypeScript** - Type-safe JavaScript
+- **Vite 7** - Fast build tool with instant HMR
+
+### Styling & Animation
+
+- **Tailwind CSS v4** - Utility-first CSS framework
+- **Framer Motion** - Animation library
+- **GSAP** - Advanced animations with ScrollTrigger
+- **Lenis** - Smooth scrolling
+
+### Backend & Data
+
+- **Supabase** - PostgreSQL database, authentication, and storage
+- **@supabase/supabase-js** - Supabase JavaScript client
+
+### Font Processing
+
+- **wawoff2** - WebAssembly-based WOFF2 compression
+- **opentype.js** - Font file parsing and glyph extraction
+
+## Environment Variables Reference
+
+<ParamField path="VITE_SUPABASE_URL" type="string" required>
+  Your Supabase project URL (e.g., `https://xxx.supabase.co`)
+</ParamField>
+
+<ParamField path="VITE_SUPABASE_ANON_KEY" type="string" required>
+  Your Supabase anonymous/public API key for client-side requests
+</ParamField>
+
+<Warning>
+  The Supabase client validates that both environment variables are present. Missing values will throw an error at runtime.
+</Warning>
+
+## Troubleshooting
+
+### Port Already in Use
+
+If port 5173 is already in use, Vite will automatically try the next available port.
+
+### TypeScript Errors
+
+Run the TypeScript compiler to check for type errors:
+
+```bash
+npx tsc --noEmit
+```
+
+### Dependency Issues
+
+Clear node_modules and reinstall:
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Database Schema" icon="database" href="/developers/database-schema">
+    Learn about the PostgreSQL schema and table structures
+  </Card>
+  <Card title="Authentication" icon="lock" href="/developers/authentication">
+    Understand how Supabase Auth is integrated
+  </Card>
+  <Card title="Contributing" icon="git-alt" href="/developers/contributing">
+    Read the contribution guidelines
+  </Card>
+</CardGroup>

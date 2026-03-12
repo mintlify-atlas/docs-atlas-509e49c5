@@ -1,0 +1,165 @@
+---
+title: Font tester
+description: Test fonts with live typography controls, OpenType features, and real-world context previews
+---
+
+The font tester gives you complete control over typography settings, allowing you to experiment with fonts before downloading.
+
+## Live preview
+
+The interactive textarea lets you type or paste any text to see how it looks in the selected font. The preview automatically resizes to fit your content.
+
+### Text presets
+
+Quickly test common character sets:
+
+<Tabs>
+  <Tab title="Abc">
+    "The quick brown fox jumps over the lazy dog." - Tests all lowercase and uppercase letters
+  </Tab>
+  <Tab title="A-Z">
+    Complete alphabet in uppercase and lowercase for character comparison
+  </Tab>
+  <Tab title="123">
+    Numbers and special characters: `0123456789 !@#$%^&*()_+-=[]{};':",./<>?`
+  </Tab>
+  <Tab title="¶">
+    Full paragraph of body text to test readability at smaller sizes
+  </Tab>
+</Tabs>
+
+## Typography controls
+
+### Variant selector
+
+If a font includes multiple variants (Regular, Bold, Italic, etc.), use the dropdown to switch between them. Variants are automatically sorted by weight:
+
+1. Thin (100)
+2. ExtraLight (200)
+3. Light (300)
+4. Regular (400)
+5. Medium (500)
+6. SemiBold (600)
+7. Bold (700)
+8. ExtraBold (800)
+9. Black (900)
+
+Italic variants appear after their corresponding upright weights.
+
+### Size
+
+Adjust font size from 12px to 200px using the slider or type a specific value. Perfect for testing both display headlines and body text.
+
+### Leading (line height)
+
+Control vertical spacing between lines with values from 0.8 to 3. Default is 1.5 for comfortable reading.
+
+### Tracking (letter spacing)
+
+Fine-tune horizontal spacing between characters from -10px (tighter) to +50px (looser). Useful for headlines and logos.
+
+### Text alignment
+
+<CardGroup cols={3}>
+  <Card title="Left" icon="align-left">
+    Standard left-aligned text
+  </Card>
+  <Card title="Center" icon="align-center">
+    Centered text for headlines
+  </Card>
+  <Card title="Right" icon="align-right">
+    Right-aligned text
+  </Card>
+</CardGroup>
+
+### Color controls
+
+Two color pickers let you customize:
+- **Text color**: Choose any color for the font
+- **Background color**: Test contrast and readability
+
+## OpenType features
+
+Enable advanced typographic features when supported by the font:
+
+<AccordionGroup>
+  <Accordion title="Ligatures (liga)">
+    Standard ligatures like "fi", "fl", "ff" for improved letter connections. Enabled by default.
+  </Accordion>
+
+  <Accordion title="Discretionary ligatures (dlig)">
+    Decorative ligatures for stylistic effect, like "ct", "st", "sp".
+  </Accordion>
+
+  <Accordion title="Small caps (smcp)">
+    Converts lowercase letters to smaller capital letters designed to match the x-height.
+  </Accordion>
+
+  <Accordion title="Fractions (frac)">
+    Formats numbers like 1/2 into proper typographic fractions: ½
+  </Accordion>
+
+  <Accordion title="Slashed zero (zero)">
+    Displays zero with a slash through it to distinguish from letter O.
+  </Accordion>
+
+  <Accordion title="Tabular figures (tnum)">
+    Makes all numbers the same width for alignment in tables and code.
+  </Accordion>
+
+  <Accordion title="Stylistic alternates (salt)">
+    Activates alternative character designs when available.
+  </Accordion>
+</AccordionGroup>
+
+Click the **Features** button to show/hide the OpenType toggles.
+
+## Real-world context
+
+At the bottom of the tester, see how your font looks in practical UI scenarios:
+
+- **Landing page hero**: Large headline with supporting text
+- **Article layout**: Heading hierarchy with body copy
+- **Navigation menu**: Horizontal navigation with links
+- **Button styles**: Primary and secondary button text
+- **Form inputs**: Labels and placeholder text
+- **Card components**: Title, description, and metadata
+
+This context preview helps you understand how the font performs in actual interface designs, not just in isolation.
+
+## Font loading
+
+The tester dynamically loads font files using the Font Face API:
+
+1. Prefers WOFF2 format (best compression)
+2. Falls back to WOFF, TTF, or OTF if WOFF2 unavailable
+3. Loads the selected variant on demand
+4. Caches fonts in the browser for instant switching
+
+The preview updates automatically once the font loads, with a fade-in animation for smooth transitions.
+
+## Mobile experience
+
+On mobile devices:
+- Controls are stacked vertically for easier access
+- Sliders are touch-optimized with larger hit areas
+- The features panel is collapsible to save screen space
+- Font size defaults to a smaller value for better mobile viewing
+
+## Tips for testing
+
+<Tip>
+  Test fonts with your actual content. Copy text from your design files or marketing copy to see real-world performance.
+</Tip>
+
+<Tip>
+  Check readability at smaller sizes (14-18px) for body text, and impact at larger sizes (48px+) for headlines.
+</Tip>
+
+<Tip>
+  Enable tabular figures (tnum) when testing fonts for dashboards, data tables, or financial applications.
+</Tip>
+
+<Warning>
+  Not all fonts support every OpenType feature. If toggling a feature has no effect, the font doesn't include that feature.
+</Warning>

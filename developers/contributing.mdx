@@ -1,0 +1,432 @@
+---
+title: 'Contributing'
+description: 'How to contribute to NoBadFonts'
+icon: 'git-alt'
+---
+
+## Welcome Contributors
+
+Thank you for your interest in contributing to NoBadFonts! We welcome contributions from designers, developers, and typography enthusiasts. This guide will help you get started.
+
+## Ways to Contribute
+
+There are many ways to contribute to NoBadFonts:
+
+- **Report Bugs** - Found an issue? Let us know!
+- **Suggest Features** - Have ideas for improvements? We'd love to hear them.
+- **Submit Fonts** - Curate and upload quality typefaces.
+- **Fix Issues** - Browse open issues and submit pull requests.
+- **Improve Documentation** - Help us make the docs clearer.
+- **Write Tests** - Increase code coverage and reliability.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+Before contributing, make sure you have:
+
+- **Node.js 20+** installed
+- **Git** configured with your GitHub account
+- Basic familiarity with React and TypeScript
+- A code editor (we recommend VS Code)
+
+### Development Setup
+
+<Steps>
+  <Step title="Fork the repository">
+    Visit the [NoBadFonts repository](https://github.com/your-username/nobadfonts) and click the **Fork** button to create your own copy.
+  </Step>
+
+  <Step title="Clone your fork">
+    Clone your forked repository to your local machine:
+
+    ```bash
+    git clone https://github.com/your-username/nobadfonts.git
+    cd nobadfonts
+    ```
+  </Step>
+
+  <Step title="Add upstream remote">
+    Add the original repository as an upstream remote to keep your fork in sync:
+
+    ```bash
+    git remote add upstream https://github.com/original-owner/nobadfonts.git
+    ```
+  </Step>
+
+  <Step title="Install dependencies">
+    Install all required dependencies:
+
+    ```bash
+    npm install
+    ```
+  </Step>
+
+  <Step title="Set up environment variables">
+    Create a `.env` file with your Supabase credentials:
+
+    ```env
+    VITE_SUPABASE_URL=your_supabase_project_url
+    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+    ```
+
+    See the [Setup Guide](/developers/setup) for detailed instructions.
+  </Step>
+
+  <Step title="Start the development server">
+    Run the development server to verify everything works:
+
+    ```bash
+    npm run dev
+    ```
+  </Step>
+</Steps>
+
+<Tip>
+  If you encounter issues during setup, check the [Setup Guide](/developers/setup#troubleshooting) for troubleshooting steps.
+</Tip>
+
+---
+
+## Contribution Workflow
+
+Follow these steps when contributing code:
+
+<Steps>
+  <Step title="Create a feature branch">
+    Always create a new branch for your work. Use descriptive names that reflect the change:
+
+    ```bash
+    git checkout -b feature/AmazingFeature
+    ```
+
+    **Branch naming conventions:**
+    - `feature/` - New features (e.g., `feature/dark-mode`)
+    - `fix/` - Bug fixes (e.g., `fix/upload-validation`)
+    - `docs/` - Documentation changes (e.g., `docs/api-reference`)
+    - `refactor/` - Code refactoring (e.g., `refactor/auth-context`)
+    - `test/` - Test additions (e.g., `test/font-upload`)
+  </Step>
+
+  <Step title="Make your changes">
+    Implement your feature or fix. Follow these guidelines:
+
+    - Write clean, readable code
+    - Follow existing code style and conventions
+    - Add comments for complex logic
+    - Keep commits focused and atomic
+  </Step>
+
+  <Step title="Test your changes">
+    Verify that your changes work as expected:
+
+    ```bash
+    # Run the development server
+    npm run dev
+
+    # Run linting
+    npm run lint
+
+    # Build for production
+    npm run build
+    ```
+
+    <Note>
+      Manual testing is currently required. We welcome contributions to add automated tests!
+    </Note>
+  </Step>
+
+  <Step title="Commit your changes">
+    Write clear, descriptive commit messages:
+
+    ```bash
+    git commit -m 'Add some AmazingFeature'
+    ```
+
+    **Commit message guidelines:**
+    - Use present tense ("Add feature" not "Added feature")
+    - Start with a verb ("Fix", "Add", "Update", "Remove")
+    - Keep the first line under 72 characters
+    - Add detailed description if needed after a blank line
+
+    **Examples:**
+    ```bash
+    git commit -m 'Add WOFF2 compression to upload pipeline'
+    git commit -m 'Fix authentication redirect loop'
+    git commit -m 'Update font card layout for mobile devices'
+    ```
+  </Step>
+
+  <Step title="Push to your fork">
+    Push your changes to your forked repository:
+
+    ```bash
+    git push origin feature/AmazingFeature
+    ```
+  </Step>
+
+  <Step title="Open a Pull Request">
+    1. Go to your fork on GitHub
+    2. Click **Compare & pull request**
+    3. Fill out the PR template with:
+       - Clear description of changes
+       - Related issue numbers (if applicable)
+       - Screenshots (for UI changes)
+       - Testing notes
+    4. Submit the pull request
+  </Step>
+</Steps>
+
+---
+
+## Code Style Guidelines
+
+### TypeScript
+
+- Use TypeScript for all new code
+- Define proper types (avoid `any` when possible)
+- Use interfaces for object shapes
+- Leverage type inference where appropriate
+
+```typescript
+// Good
+interface FontUploadData {
+  name: string;
+  designer: string;
+  category: string;
+  files: File[];
+}
+
+function uploadFont(data: FontUploadData): Promise<void> {
+  // Implementation
+}
+
+// Avoid
+function uploadFont(data: any) {
+  // Implementation
+}
+```
+
+### React Components
+
+- Use functional components with hooks
+- Extract reusable logic into custom hooks
+- Keep components focused and single-purpose
+- Use descriptive prop names
+
+```typescript
+// Good
+interface FontCardProps {
+  font: Font;
+  onFavorite?: (fontId: string) => void;
+}
+
+export function FontCard({ font, onFavorite }: FontCardProps) {
+  // Component implementation
+}
+```
+
+### File Organization
+
+- Group related components in directories
+- Use `index.ts` for clean imports
+- Keep files under 300 lines (split if larger)
+- Co-locate tests with components (when added)
+
+### Styling
+
+- Use Tailwind CSS utility classes
+- Avoid inline styles unless dynamic
+- Use `clsx` for conditional classes
+- Follow mobile-first responsive design
+
+```typescript
+import { clsx } from 'clsx';
+
+function Button({ variant }: { variant: 'primary' | 'secondary' }) {
+  return (
+    <button
+      className={clsx(
+        'px-4 py-2 rounded-lg font-medium transition-colors',
+        variant === 'primary' && 'bg-blue-500 text-white hover:bg-blue-600',
+        variant === 'secondary' && 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+      )}
+    >
+      Click me
+    </button>
+  );
+}
+```
+
+---
+
+## Pull Request Guidelines
+
+### Before Submitting
+
+<Checklist>
+  - [ ] Code follows the project's style guidelines
+  - [ ] Self-review completed
+  - [ ] Comments added for complex logic
+  - [ ] No console.log statements (except intentional logging)
+  - [ ] Build succeeds (`npm run build`)
+  - [ ] Lint passes (`npm run lint`)
+  - [ ] Manual testing completed
+</Checklist>
+
+### PR Description Template
+
+Include the following in your PR description:
+
+```markdown
+## Description
+Brief description of what this PR does.
+
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Breaking change
+- [ ] Documentation update
+
+## Related Issues
+Closes #123
+
+## Screenshots (if applicable)
+[Add screenshots for UI changes]
+
+## Testing
+Describe how you tested these changes.
+
+## Checklist
+- [ ] Code follows style guidelines
+- [ ] Self-review completed
+- [ ] Build succeeds
+- [ ] Lint passes
+```
+
+### Review Process
+
+1. A maintainer will review your PR within a few days
+2. Address any requested changes
+3. Once approved, your PR will be merged
+4. Your contribution will be included in the next release
+
+<Note>
+  Be patient during the review process. Maintainers may be in different time zones or have limited availability.
+</Note>
+
+---
+
+## Reporting Issues
+
+Found a bug? Help us fix it by providing detailed information:
+
+### Bug Reports Should Include
+
+- **Clear title** - Summarize the issue in one line
+- **Description** - Detailed explanation of the problem
+- **Steps to reproduce** - How to trigger the bug
+- **Expected behavior** - What should happen
+- **Actual behavior** - What actually happens
+- **Screenshots** - Visual evidence (if applicable)
+- **Environment** - Browser, OS, Node version
+
+### Example Bug Report
+
+```markdown
+**Title:** Font upload fails with WOFF2 files over 2MB
+
+**Description:**
+When uploading a WOFF2 font file larger than 2MB, the upload
+progress bar reaches 100% but the font is never saved to the database.
+
+**Steps to Reproduce:**
+1. Go to /upload
+2. Select a WOFF2 file > 2MB
+3. Fill out the form and click Upload
+4. Watch the progress bar complete
+5. No font appears in the catalog
+
+**Expected Behavior:**
+The font should be uploaded and appear in the catalog.
+
+**Actual Behavior:**
+The upload appears to complete but nothing is saved.
+
+**Environment:**
+- Browser: Chrome 120
+- OS: macOS Sonoma 14.2
+- Node: 20.10.0
+```
+
+---
+
+## Feature Requests
+
+We welcome feature suggestions! When proposing a new feature:
+
+1. **Check existing issues** - Someone may have already suggested it
+2. **Describe the problem** - What need does this feature address?
+3. **Propose a solution** - How would you implement it?
+4. **Consider alternatives** - Are there other approaches?
+5. **Add mockups** - Visual representations help (if applicable)
+
+---
+
+## Community Guidelines
+
+### Code of Conduct
+
+We are committed to providing a welcoming and inclusive environment. All contributors are expected to:
+
+- Be respectful and considerate
+- Accept constructive criticism gracefully
+- Focus on what's best for the community
+- Show empathy towards others
+
+### Communication Channels
+
+- **GitHub Issues** - Bug reports and feature requests
+- **Pull Requests** - Code contributions and discussions
+- **Discussions** - General questions and community chat
+
+---
+
+## Recognition
+
+Contributors are recognized in several ways:
+
+- Listed in the project's `README.md`
+- Mentioned in release notes
+- Profile linked from the contributors page
+
+---
+
+## Questions?
+
+If you have questions about contributing:
+
+1. Check the [Setup Guide](/developers/setup) for technical setup
+2. Review the [Database Schema](/developers/database-schema) for data structures
+3. Read the [Authentication Guide](/developers/authentication) for auth-related work
+4. Open a GitHub Discussion for general questions
+
+<CardGroup cols={2}>
+  <Card title="Development Setup" icon="code" href="/developers/setup">
+    Set up your local development environment
+  </Card>
+  <Card title="Database Schema" icon="database" href="/developers/database-schema">
+    Understand the database structure
+  </Card>
+  <Card title="Authentication" icon="lock" href="/developers/authentication">
+    Learn about the auth system
+  </Card>
+</CardGroup>
+
+---
+
+## Thank You
+
+Your contributions make NoBadFonts better for everyone. We appreciate your time and effort in improving the platform!

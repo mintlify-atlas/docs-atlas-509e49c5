@@ -1,0 +1,247 @@
+---
+title: 'list'
+description: 'Browse available fonts from NoBadFonts'
+icon: 'list'
+---
+
+## Overview
+
+The `list` command displays the top 50 most popular fonts available on NoBadFonts, sorted by download count. Use this to discover fonts before adding them to your project.
+
+## Syntax
+
+```bash
+npx nobadfonts list
+```
+
+<Note>
+No arguments are required for the `list` command.
+</Note>
+
+## Example
+
+```bash
+npx nobadfonts list
+```
+
+**Output:**
+```bash
+⠋ Fetching available fonts...
+
+Available Fonts (Top 50):
+• Inter (sans-serif, modern)
+• Roboto (sans-serif, clean)
+• Poppins (sans-serif, geometric)
+• Montserrat (sans-serif, urban)
+• Lato (sans-serif, warm)
+• Open Sans (sans-serif, friendly)
+• Raleway (sans-serif, elegant)
+• Ubuntu (sans-serif, technical)
+• Nunito (sans-serif, rounded)
+• Merriweather (serif, readable)
+• Playfair Display (serif, dramatic)
+• Source Sans Pro (sans-serif, professional)
+• Work Sans (sans-serif, neutral)
+• DM Sans (sans-serif, geometric)
+• Space Grotesk (sans-serif, technical)
+...
+
+To install (CSS Import): npx nobadfonts-cli add "Font Name"
+To download (Local Files): npx nobadfonts-cli download "Font Name"
+```
+
+## Output Format
+
+Each font is displayed with:
+
+<ParamField path="Bullet point" type="indicator">
+  Green bullet (•) before each font name
+</ParamField>
+
+<ParamField path="Font name" type="string">
+  The official font name, displayed in white
+</ParamField>
+
+<ParamField path="Categories/Tags" type="metadata">
+  Font classification shown in gray parentheses (e.g., "sans-serif, modern")
+</ParamField>
+
+## Font Categories
+
+Fonts are tagged with descriptive categories:
+
+### Style Categories
+- **sans-serif** - Clean, modern fonts without serifs
+- **serif** - Traditional fonts with decorative strokes
+- **display** - Decorative fonts for headlines
+- **monospace** - Fixed-width fonts for code
+- **handwriting** - Script and handwritten styles
+
+### Character Categories
+- **modern** - Contemporary, clean design
+- **geometric** - Based on geometric shapes
+- **humanist** - Organic, calligraphic influence
+- **elegant** - Sophisticated and refined
+- **friendly** - Approachable and warm
+- **technical** - Industrial and precise
+
+## What It Does
+
+<Steps>
+  <Step title="Queries the API">
+    Fetches font data from the NoBadFonts database via Supabase REST API.
+  </Step>
+  
+  <Step title="Sorts by Popularity">
+    Orders fonts by download count (most popular first).
+  </Step>
+  
+  <Step title="Limits Results">
+    Returns the top 50 fonts to keep output manageable.
+  </Step>
+  
+  <Step title="Displays Metadata">
+    Shows font names with their tags and categories for easy browsing.
+  </Step>
+</Steps>
+
+## API Request Details
+
+The command makes a GET request to:
+
+```
+{SUPABASE_URL}/rest/v1/fonts?select=name,category,tags&limit=50&order=downloads.desc
+```
+
+**Headers:**
+- `apikey`: Your Supabase anonymous key
+- `Authorization`: Bearer token with anonymous key
+
+## Using the Output
+
+Once you've found a font you like, copy its exact name and use it with other commands:
+
+### Add via CSS Import
+
+```bash
+npx nobadfonts add "Inter"
+```
+
+### Download Locally
+
+```bash
+npx nobadfonts download "Inter"
+```
+
+<Note>
+Font names are case-insensitive, so "Inter", "inter", and "INTER" all work.
+</Note>
+
+## Error Handling
+
+### API Connection Error
+
+If the CLI can't reach the NoBadFonts API:
+
+```bash
+⠋ Fetching available fonts...
+✖ Error fetching fonts: Failed to fetch
+```
+
+**Common causes:**
+- Missing or invalid `SUPABASE_URL`
+- Missing or invalid `SUPABASE_ANON_KEY`
+- Network connectivity issues
+- API is temporarily unavailable
+
+See [Configuration](/cli/configuration) and [Troubleshooting](/cli/troubleshooting) for solutions.
+
+### Empty Response
+
+If the API returns no fonts:
+
+```bash
+⠋ Fetching available fonts...
+
+Available Fonts (Top 50):
+
+To install (CSS Import): npx nobadfonts-cli add "Font Name"
+To download (Local Files): npx nobadfonts-cli download "Font Name"
+```
+
+This usually indicates a database issue or incorrect API configuration.
+
+## Filtering and Search
+
+The `list` command shows all top 50 fonts. To find specific fonts:
+
+### Use grep (Unix/Linux/macOS)
+
+```bash
+npx nobadfonts list | grep -i "sans"
+```
+
+Shows only sans-serif fonts.
+
+### Use findstr (Windows)
+
+```bash
+npx nodfonts list | findstr /i "mono"
+```
+
+Shows only monospace fonts.
+
+### Search by Category
+
+```bash
+npx nobadfonts list | grep -i "serif"
+```
+
+Filters fonts containing "serif" in their metadata.
+
+## Response Speed
+
+<ParamField path="Typical response time" type="metric">
+  1-3 seconds depending on network conditions
+</ParamField>
+
+<ParamField path="Rate limiting" type="info">
+  No rate limits for anonymous requests
+</ParamField>
+
+## Font Selection Tips
+
+<CardGroup cols={2}>
+  <Card title="Body Text" icon="align-left">
+    Choose highly legible fonts like Inter, Roboto, or Open Sans
+  </Card>
+  <Card title="Headlines" icon="heading">
+    Use display fonts like Playfair Display or Montserrat
+  </Card>
+  <Card title="Code" icon="code">
+    Pick monospace fonts like JetBrains Mono or Fira Code
+  </Card>
+  <Card title="Branding" icon="palette">
+    Select distinctive fonts that match your brand personality
+  </Card>
+</CardGroup>
+
+## Limitations
+
+<Warning>
+The list command only shows the top 50 fonts by popularity. More fonts may be available through the web interface at [nobadfonts.in](https://nobadfonts.in).
+</Warning>
+
+## See Also
+
+<CardGroup cols={2}>
+  <Card title="add" icon="plus" href="/cli/commands/add">
+    Add fonts via CSS import
+  </Card>
+  <Card title="download" icon="download" href="/cli/commands/download">
+    Download fonts locally
+  </Card>
+  <Card title="Web Browser" icon="globe" href="https://nobadfonts.in">
+    Browse all fonts online
+  </Card>
+</CardGroup>

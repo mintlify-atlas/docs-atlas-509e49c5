@@ -1,0 +1,420 @@
+---
+title: 'Authentication'
+description: 'Supabase Auth integration and user management in NoBadFonts'
+icon: 'lock'
+---
+
+## Overview
+
+NoBadFonts uses **Supabase Auth** for secure, scalable authentication. The platform supports OAuth providers and maintains user sessions across the application through a React Context provider.
+
+## Architecture
+
+Authentication is managed by the `AuthContext` (located at `src/contexts/AuthContext.tsx`), which wraps the entire application and provides reactive authentication state.
+
+### Key Components
+
+1. **Supabase Client** (`src/lib/supabase.ts`) - Initialized with project credentials
+2. **AuthContext** - React Context that manages auth state
+3. **AuthProvider** - Context provider component
+4. **useAuth Hook** - Custom hook for accessing auth state
+
+---
+
+## Supabase Client Setup
+
+The Supabase client is initialized with environment variables:
+
+```typescript src/lib/supabase.ts
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables');
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+```
+
+<Warning>
+  The client validates that both `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are present. Missing values will throw an error at startup.
+</Warning>
+
+---
+
+## AuthContext Implementation
+
+The `AuthContext` provides authentication state and methods throughout the application.
+
+### Context Type Definition
+
+```typescript
+interface AuthContextType {
+  session: Session | null;          // Current Supabase session
+  user: User | null;                // Current authenticated user
+  profile: Profile | null;          // User profile from database
+  loading: boolean;                 // Initial auth check loading state
+  signInWithGoogle: () => Promise<void>;
+  signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
+}
+```
+
+### State Management
+
+The `AuthProvider` manages four key pieces of state:
+
+<ParamField path="session" type="Session | null">
+  The active Supabase session containing tokens and expiry information.
+</ParamField>
+
+<ParamField path="user" type="User | null">
+  The authenticated user object from `auth.users`.
+</ParamField>
+
+<ParamField path="profile" type="Profile | null">
+  Extended user profile from the `profiles` table, including username, role, and social links.
+</ParamField>
+
+<ParamField path="loading" type="boolean">
+  Indicates whether the initial authentication check is in progress. Set to `false` after session is confirmed or rejected.
+</ParamField>
+
+---
+
+## Authentication Flow
+
+### Initial Session Check
+
+When the app loads, the provider checks for an existing session:
+
+```typescript
+useEffect(() => {
+  // Check active session
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    setSession(session);
+    setUser(session?.user ?? null);
+    if (session?.user) {
+      fetchProfile(session.user.id);
+    } else {
+      setLoading(false);
+    }
+  });
+}, []);
+```
+
+<Steps>
+  <Step title="Get Session">
+    Call `supabase.auth.getSession()` to retrieve any existing session from local storage.
+  </Step>
+  
+  <Step title="Set User State">
+    Update `session` and `user` state based on the result.
+  </Step>
+  
+  <Step title="Fetch Profile">
+    If a user is authenticated, fetch their profile data from the `profiles` table.
+  </Step>
+  
+  <Step title="Set Loading to False">
+    Once the check completes, set `loading` to `false` to render the app.
+  </Step>
+</Steps>
+
+### Auth State Listener
+
+The provider subscribes to authentication state changes:
+
+```typescript
+const { data: { subscription } } = supabase.auth.onAuthStateChange(
+  (_event, session) => {
+    setSession(session);
+    setUser(session?.user ?? null);
+    if (session?.user) {
+      fetchProfile(session.user.id);
+    } else {
+      setProfile(null);
+      setLoading(false);
+    }
+  }
+);
+
+return () => subscription.unsubscribe();
+```
+
+<Note>
+  The listener automatically updates state when users sign in, sign out, or when tokens are refreshed.
+</Note>
+
+---
+
+## Profile Fetching
+
+User profiles are fetched from the `profiles` table and synchronized with the auth state:
+
+```typescript
+async function fetchProfile(userId: string) {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching profile:', error);
+    } else {
+      setProfile(data);
+    }
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+  } finally {
+    setLoading(false);
+  }
+}
+```
+
+<Tip>
+  The `refreshProfile()` method can be called to manually re-fetch profile data after updates.
+</Tip>
+
+---
+
+## Authentication Methods
+
+### Sign In with Google
+
+```typescript
+const signInWithGoogle = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin
+    }
+  });
+  if (error) throw error;
+};
+```
+
+**Flow:**
+
+1. User clicks "Sign in with Google"
+2. User is redirected to Google OAuth consent screen
+3. After authorization, Google redirects back to `redirectTo` URL
+4. Supabase extracts the auth code and creates a session
+5. The `onAuthStateChange` listener updates the app state
+
+<Note>
+  Configure Google OAuth in the Supabase dashboard under **Authentication** > **Providers**.
+</Note>
+
+### Sign Out
+
+```typescript
+const signOut = async () => {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
+};
+```
+
+Clears the session and triggers the `onAuthStateChange` listener to update state.
+
+---
+
+## Using the useAuth Hook
+
+Access authentication state anywhere in the app:
+
+```typescript
+import { useAuth } from '@/contexts/AuthContext';
+
+function MyComponent() {
+  const { user, profile, loading, signInWithGoogle, signOut } = useAuth();
+
+  if (loading) return <div>Loading...</div>;
+
+  if (!user) {
+    return <button onClick={signInWithGoogle}>Sign In</button>;
+  }
+
+  return (
+    <div>
+      <p>Welcome, {profile?.full_name}</p>
+      <p>Role: {profile?.role}</p>
+      <button onClick={signOut}>Sign Out</button>
+    </div>
+  );
+}
+```
+
+<Warning>
+  The `useAuth` hook must be called within a component wrapped by `AuthProvider`. Calling it outside will throw an error.
+</Warning>
+
+---
+
+## Protected Routes
+
+Use the auth state to protect routes:
+
+```typescript
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  return <>{children}</>;
+}
+```
+
+### Admin-Only Routes
+
+```typescript
+function AdminRoute({ children }: { children: React.ReactNode }) {
+  const { profile, loading } = useAuth();
+
+  if (loading) return <div>Loading...</div>;
+
+  if (profile?.role !== 'admin') {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
+}
+```
+
+---
+
+## Role-Based Access Control
+
+NoBadFonts implements three user roles:
+
+### User Roles
+
+<ParamField path="user" type="string">
+  Default role for all authenticated users. Can view published fonts and manage their own uploads.
+</ParamField>
+
+<ParamField path="member" type="string">
+  Approved contributors who have been verified by admins. Can upload fonts directly to the platform.
+</ParamField>
+
+<ParamField path="admin" type="string">
+  Full access to all features, including user management, font moderation, and publishing controls.
+</ParamField>
+
+### Checking Roles in Components
+
+```typescript
+const { profile } = useAuth();
+
+const isAdmin = profile?.role === 'admin';
+const isMember = profile?.role === 'member' || isAdmin;
+
+if (isAdmin) {
+  // Show admin controls
+}
+```
+
+---
+
+## Session Management
+
+Supabase automatically handles:
+
+- **Token Refresh** - Access tokens are refreshed automatically before expiry
+- **Persistent Sessions** - Sessions are stored in local storage and persist across page reloads
+- **Multi-Tab Sync** - Auth state is synchronized across browser tabs
+
+### Manual Session Refresh
+
+To manually refresh the session:
+
+```typescript
+const { data, error } = await supabase.auth.refreshSession();
+```
+
+---
+
+## Security Best Practices
+
+<Warning>
+  **Never expose the service role key on the client.** Only use the anonymous (anon) key in frontend code.
+</Warning>
+
+### Row Level Security (RLS)
+
+All database access is protected by RLS policies. Even with a valid session, users can only:
+
+- Read their own profile and public profiles
+- Update their own profile
+- Create fonts linked to their user ID
+- Update/delete only their own fonts (unless admin)
+
+### Token Storage
+
+Supabase stores tokens securely:
+
+- **Local Storage** - Default storage mechanism
+- **HttpOnly Cookies** - Can be configured for additional security
+
+---
+
+## Troubleshooting
+
+### "Missing Supabase environment variables" Error
+
+Ensure your `.env` file contains:
+
+```env
+VITE_SUPABASE_URL=https://xxx.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGc...
+```
+
+### Auth State Not Updating
+
+Make sure your component is wrapped with `AuthProvider`:
+
+```typescript
+import { AuthProvider } from '@/contexts/AuthContext';
+
+function App() {
+  return (
+    <AuthProvider>
+      {/* Your app components */}
+    </AuthProvider>
+  );
+}
+```
+
+### Profile Not Loading
+
+Check that:
+
+1. The `profiles` table exists in your Supabase project
+2. RLS policies allow reading profiles
+3. A profile row exists for the authenticated user
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Database Schema" icon="database" href="/developers/database-schema">
+    Learn about the profiles table structure
+  </Card>
+  <Card title="Contributing" icon="git-alt" href="/developers/contributing">
+    Start contributing to NoBadFonts
+  </Card>
+</CardGroup>

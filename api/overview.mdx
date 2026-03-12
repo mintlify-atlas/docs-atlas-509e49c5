@@ -1,0 +1,99 @@
+---
+title: 'API Overview'
+description: 'Learn about the NoBadFonts REST API powered by Supabase'
+icon: 'book-open'
+---
+
+## Introduction
+
+The NoBadFonts API is a REST API built on [Supabase](https://supabase.com), providing programmatic access to our curated collection of high-quality fonts. The API allows you to search, filter, and retrieve font data including variants, metadata, and file URLs.
+
+## Base URL
+
+All API requests are made to your Supabase project URL:
+
+```
+https://[YOUR_PROJECT_ID].supabase.co/rest/v1
+```
+
+Replace `[YOUR_PROJECT_ID]` with your actual Supabase project identifier.
+
+## API Architecture
+
+The NoBadFonts API is built on Supabase's PostgREST implementation, which automatically generates a REST API from your PostgreSQL schema. This provides:
+
+- **Automatic CRUD operations** for all tables
+- **Advanced filtering** using query parameters
+- **Relational queries** with nested resource expansion
+- **Full-text search** capabilities
+- **Row-level security** for data protection
+
+## Core Resources
+
+The API exposes the following primary resources:
+
+<CardGroup cols={2}>
+  <Card title="Fonts" icon="font" href="/api/fonts">
+    Browse and search the curated font collection
+  </Card>
+  <Card title="Font Variants" icon="palette" href="/api/font-variants">
+    Access different weights and styles for each font
+  </Card>
+  <Card title="Profiles" icon="user" href="/api/profiles">
+    Retrieve designer and contributor information
+  </Card>
+</CardGroup>
+
+## Authentication
+
+All API requests require authentication. See the [Authentication](/api/authentication) page for detailed information on how to authenticate your requests.
+
+## Rate Limits
+
+The API inherits Supabase's default rate limiting:
+
+- **Anonymous requests**: Limited by your Supabase project settings
+- **Authenticated requests**: Higher limits based on your Supabase plan
+
+<Note>
+  For production applications, consider implementing caching strategies to minimize API calls and improve performance.
+</Note>
+
+## Response Format
+
+All responses are returned in JSON format. Successful requests return a `200 OK` status code along with the requested data. Error responses include appropriate HTTP status codes and error messages.
+
+### Success Response
+
+```json
+[
+  {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "name": "Inter",
+    "designer": "Rasmus Andersson",
+    "category": "sans-serif"
+  }
+]
+```
+
+### Error Response
+
+```json
+{
+  "code": "PGRST116",
+  "message": "The result contains 0 rows",
+  "details": null,
+  "hint": null
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/api/authentication">
+    Set up API authentication
+  </Card>
+  <Card title="Fonts Endpoint" icon="font" href="/api/fonts">
+    Start querying fonts
+  </Card>
+</CardGroup>

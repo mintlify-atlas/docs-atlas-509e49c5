@@ -1,0 +1,195 @@
+---
+title: 'Authentication'
+description: 'Authenticate your API requests with Supabase'
+icon: 'key'
+---
+
+## Overview
+
+The NoBadFonts API uses Supabase authentication, which requires you to include your API key in the request headers. There are two types of API keys:
+
+- **Anonymous (public) key**: For read-only operations, safe to use in client-side code
+- **Service role key**: For administrative operations with full database access
+
+<Warning>
+  Never expose your service role key in client-side code or public repositories. It bypasses all Row Level Security policies.
+</Warning>
+
+## Getting Your API Keys
+
+1. Log in to your [Supabase Dashboard](https://app.supabase.com)
+2. Select your project
+3. Navigate to **Settings** > **API**
+4. Copy your project URL and API keys
+
+## Authentication Headers
+
+Every API request must include two headers:
+
+<ParamField header="apikey" type="string" required>
+  Your Supabase project API key (anon key for public access)
+</ParamField>
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token with your API key: `Bearer YOUR_API_KEY`
+</ParamField>
+
+## Basic Authentication
+
+For public read-only access to fonts, use the anonymous key:
+
+```bash
+curl "https://YOUR_PROJECT_ID.supabase.co/rest/v1/fonts?select=*" \
+  -H "apikey: YOUR_ANON_KEY" \
+  -H "Authorization: Bearer YOUR_ANON_KEY"
+```
+
+### Example with Environment Variables
+
+```bash
+export SUPABASE_URL="https://YOUR_PROJECT_ID.supabase.co"
+export SUPABASE_ANON_KEY="your_anon_key_here"
+
+curl "${SUPABASE_URL}/rest/v1/fonts?select=*" \
+  -H "apikey: ${SUPABASE_ANON_KEY}" \
+  -H "Authorization: Bearer ${SUPABASE_ANON_KEY}"
+```
+
+## User Authentication
+
+For operations that require user context (like favoriting fonts or accessing user profiles), you need to authenticate as a specific user.
+
+### Sign In with Email
+
+```bash
+curl "${SUPABASE_URL}/auth/v1/token?grant_type=password" \
+  -H "apikey: ${SUPABASE_ANON_KEY}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "user_password"
+  }'
+```
+
+### Response
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer",
+  "expires_in": 3600,
+  "refresh_token": "v1.MRjALs7...",
+  "user": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "email": "user@example.com"
+  }
+}
+```
+
+### Using the Access Token
+
+Once authenticated, use the `access_token` in subsequent requests:
+
+```bash
+curl "${SUPABASE_URL}/rest/v1/profiles?id=eq.123e4567-e89b-12d3-a456-426614174000" \
+  -H "apikey: ${SUPABASE_ANON_KEY}" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+## Client-Side Authentication
+
+When using the Supabase JavaScript client, authentication is handled automatically:
+
+```typescript
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+// Sign in
+const { data, error } = await supabase.auth.signInWithPassword({
+  email: 'user@example.com',
+  password: 'user_password'
+})
+
+// Now all subsequent queries are automatically authenticated
+const { data: fonts } = await supabase
+  .from('fonts')
+  .select('*')
+```
+
+<Note>
+  The Supabase client automatically manages tokens, refresh cycles, and includes them in all API requests.
+</Note>
+
+## Error Responses
+
+### Invalid API Key
+
+```json
+{
+  "message": "Invalid API key"
+}
+```
+
+**Status Code**: `401 Unauthorized`
+
+### Missing Authorization Header
+
+```json
+{
+  "message": "JWT expired"
+}
+```
+
+**Status Code**: `401 Unauthorized`
+
+### Insufficient Permissions
+
+```json
+{
+  "code": "42501",
+  "message": "new row violates row-level security policy"
+}
+```
+
+**Status Code**: `403 Forbidden`
+
+## Security Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use Environment Variables">
+    Never hardcode API keys in your source code. Use environment variables:
+    
+    ```bash
+    # .env
+    VITE_SUPABASE_URL=your_project_url
+    VITE_SUPABASE_ANON_KEY=your_anon_key
+    ```
+  </Accordion>
+
+  <Accordion title="Rotate Keys Regularly">
+    Periodically rotate your API keys from the Supabase dashboard, especially if they may have been exposed.
+  </Accordion>
+
+  <Accordion title="Use Row Level Security">
+    Supabase Row Level Security (RLS) policies protect your data even if API keys are compromised. The NoBadFonts API uses RLS to ensure users can only modify their own data.
+  </Accordion>
+
+  <Accordion title="Implement Rate Limiting">
+    Consider implementing client-side rate limiting and caching to avoid hitting API limits.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Fonts Endpoint" icon="font" href="/api/fonts">
+    Query the fonts collection
+  </Card>
+  <Card title="Profiles Endpoint" icon="user" href="/api/profiles">
+    Access user profiles
+  </Card>
+</CardGroup>

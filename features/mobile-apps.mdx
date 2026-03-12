@@ -1,0 +1,328 @@
+---
+title: Mobile apps
+description: Native Android app built with Capacitor for on-the-go font browsing and testing
+---
+
+NoBadFonts offers a native mobile experience for Android devices, bringing the full catalog and testing tools to your phone or tablet.
+
+## Platform support
+
+The mobile app is built using **Capacitor**, allowing the React web app to run as a native application:
+
+<CardGroup cols={2}>
+  <Card title="Android" icon="android">
+    Native Android app
+    
+    - Minimum SDK: Android 5.0 (API 21)
+    - Target SDK: Latest stable
+    - Available through direct APK install
+  </Card>
+  <Card title="iOS" icon="apple">
+    Coming soon
+    
+    - iOS 13.0+
+    - iPad support
+    - TestFlight beta (planned)
+  </Card>
+</CardGroup>
+
+## App configuration
+
+The mobile app is configured in `capacitor.config.ts`:
+
+```typescript
+const config: CapacitorConfig = {
+  appId: 'com.nobadfonts.app',
+  appName: 'NoBadFonts',
+  webDir: 'dist'
+};
+```
+
+- **App ID**: `com.nobadfonts.app` (unique Android package identifier)
+- **App Name**: "NoBadFonts" (shown on home screen and app switcher)
+- **Web Directory**: `dist` (compiled React app output)
+
+## Features
+
+The mobile app includes all core features of the web version:
+
+### Font catalog
+
+- **Responsive grid**: Adapts from 1-2 columns based on device width
+- **Touch-optimized cards**: Large tap targets for font cards
+- **Pull-to-refresh**: Swipe down to reload the catalog
+- **Infinite scroll**: Progressive loading as you scroll
+- **Search and filters**: Full filtering capability
+
+### Font tester
+
+- **Touch controls**: Sliders optimized for thumb interaction
+- **Keyboard input**: Native keyboard for text entry
+- **Color pickers**: Native color picker dialog
+- **Variant selector**: Dropdown menu for weight/style selection
+- **OpenType features**: Collapsible panel saves screen space
+
+### Font pairing
+
+- **Compact controls**: Stacked layout for mobile screens
+- **Inline editing**: Tap text blocks to edit directly
+- **Font picker modal**: Full-screen modal for font selection
+- **Background color**: Quick swatches for background changes
+- **Gesture controls**: Swipe to add/remove blocks (planned)
+
+### Font details
+
+- **Gallery swiper**: Horizontal scroll through preview images
+- **Download**: One-tap download to device storage
+- **Share**: Native share sheet integration
+- **Favorite**: Sync with web account
+
+## Mobile-specific optimizations
+
+### Performance
+
+<Accordion title="Lazy loading">
+  Images and fonts load on demand as you scroll to conserve bandwidth and memory.
+</Accordion>
+
+<Accordion title="Caching">
+  Capacitor's built-in HTTP cache stores font files locally after first download.
+</Accordion>
+
+<Accordion title="Reduced animations">
+  Respects prefers-reduced-motion for users with motion sensitivity.
+</Accordion>
+
+<Accordion title="Offline fallbacks">
+  Core UI works offline with cached data (full offline mode coming soon).
+</Accordion>
+
+### UI adaptations
+
+**Navigation**:
+- Bottom navigation bar for key sections
+- Large tap targets (48x48px minimum)
+- Native Android back button support
+
+**Typography**:
+- Larger base font size (16px vs 14px)
+- Increased line height for readability
+- Reduced letter spacing on small screens
+
+**Layout**:
+- Single column on phones (&lt;640px)
+- Two columns on large phones and small tablets (640-1024px)
+- Full desktop layout on tablets (1024px+)
+
+## Building the app
+
+Developers can build the Android app from source:
+
+<Steps>
+  <Step title="Install dependencies">
+    ```bash
+    npm install
+    ```
+  </Step>
+  <Step title="Build web app">
+    ```bash
+    npm run build
+    ```
+  </Step>
+  <Step title="Sync with Capacitor">
+    ```bash
+    npx cap sync android
+    ```
+  </Step>
+  <Step title="Open Android Studio">
+    ```bash
+    npx cap open android
+    ```
+  </Step>
+  <Step title="Build APK">
+    Use Android Studio's Build menu to generate a signed APK
+  </Step>
+</Steps>
+
+## Project structure
+
+Android-specific files:
+
+```
+android/
+├── app/
+│   ├── src/main/
+│   │   ├── AndroidManifest.xml      # App permissions and config
+│   │   ├── java/                    # Native Java/Kotlin code
+│   │   └── res/                     # App icons and resources
+│   └── build.gradle                 # App-level Gradle config
+├── gradle/                          # Gradle wrapper
+├── build.gradle                     # Project-level Gradle config
+└── settings.gradle                  # Gradle settings
+```
+
+## Permissions
+
+The app requests minimal permissions:
+
+<Accordion title="Internet access">
+  Required to fetch fonts, images, and user data from Supabase.
+</Accordion>
+
+<Accordion title="Storage access">
+  Allows saving downloaded fonts to device storage.
+</Accordion>
+
+<Accordion title="Network state">
+  Detects online/offline status to show appropriate UI.
+</Accordion>
+
+No permissions for camera, microphone, location, contacts, or other sensitive data.
+
+## Native plugins
+
+Capacitor provides native APIs:
+
+### Status Bar
+
+Customizes the Android status bar:
+- Background color matches app theme
+- Light or dark icons based on theme
+- Immersive mode for full-screen viewing
+
+### Splash Screen
+
+Shows branded splash screen while app loads:
+- Configurable duration and fade-out
+- Custom background color and logo
+
+### App
+
+App lifecycle events:
+- Handle app state (active, background, terminated)
+- Deep linking support (open specific fonts from URLs)
+
+### Share
+
+Native share sheet:
+- Share font links via SMS, email, social media
+- Share generated font preview images
+
+### Storage
+
+Persistent storage:
+- Save user preferences locally
+- Cache authentication tokens
+- Store favorite font IDs
+
+## Planned features
+
+<CardGroup cols={2}>
+  <Card title="Offline mode" icon="wifi-off">
+    Browse cached fonts without internet connection
+  </Card>
+  <Card title="Push notifications" icon="bell">
+    Get notified about new font releases
+  </Card>
+  <Card title="Widget" icon="grid">
+    Home screen widget showing featured fonts
+  </Card>
+  <Card title="Dark mode toggle" icon="moon">
+    System dark mode is supported, manual toggle coming
+  </Card>
+</CardGroup>
+
+## Distribution
+
+The Android app is available via:
+
+<Tabs>
+  <Tab title="Direct APK">
+    Download the APK file directly from the NoBadFonts website and install manually.
+    
+    **Installation**:
+    1. Enable "Install from unknown sources" in Android settings
+    2. Download APK file
+    3. Open file to install
+    4. Accept permissions
+    5. Launch app
+  </Tab>
+  <Tab title="Google Play" disabled>
+    Google Play Store listing coming soon.
+    
+    Will require:
+    - App signing key
+    - Privacy policy
+    - Store listing assets
+    - Content rating
+  </Tab>
+</Tabs>
+
+## Technical details
+
+### Web view
+
+The app uses **Android System WebView** to render the React app:
+- Chromium-based rendering engine
+- Full ES6+ JavaScript support
+- CSS Grid, Flexbox, and modern CSS
+- HTML5 APIs (Canvas, Web Fonts, etc.)
+
+### Bridge
+
+Capacitor's JavaScript bridge connects web code to native APIs:
+- Bidirectional communication (web ↔ native)
+- Async/await pattern for native calls
+- Type-safe plugin APIs
+- Plugin extensibility
+
+### Build
+
+The build process:
+1. Vite compiles React app to static HTML/CSS/JS
+2. Capacitor copies build to `android/app/src/main/assets/public/`
+3. Android WebView loads `index.html` on app launch
+4. Capacitor injects bridge JavaScript
+5. App initializes and connects to Supabase
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="App won't install">
+    - Check "Install from unknown sources" is enabled
+    - Verify the APK isn't corrupted (re-download)
+    - Ensure device meets minimum Android version (5.0+)
+  </Accordion>
+
+  <Accordion title="Blank screen on launch">
+    - Check internet connection (app needs initial data fetch)
+    - Clear app data in Android settings
+    - Reinstall the app
+  </Accordion>
+
+  <Accordion title="Fonts not loading">
+    - Verify internet connection
+    - Check CORS headers on font URLs
+    - Try refreshing the catalog
+  </Accordion>
+
+  <Accordion title="Slow performance">
+    - Close background apps to free memory
+    - Clear app cache
+    - Disable animation effects in system settings
+  </Accordion>
+</AccordionGroup>
+
+## Developer resources
+
+<Card title="Capacitor Docs" icon="book" href="https://capacitorjs.com/docs">
+  Official documentation for Capacitor framework
+</Card>
+
+<Card title="Android Developers" icon="android" href="https://developer.android.com">
+  Android development guides and API reference
+</Card>
+
+<Card title="Vite" icon="zap" href="https://vitejs.dev">
+  Build tool documentation for optimizing the web bundle
+</Card>

@@ -1,0 +1,491 @@
+---
+title: 'Profiles Endpoint'
+description: 'Retrieve user profiles and designer information'
+icon: 'user'
+---
+
+## Overview
+
+The profiles endpoint provides access to user information, including designers, contributors, and members. Profiles are linked to Supabase Auth users and contain display information, social links, and role/membership status.
+
+## Get User Profile
+
+Retrieve a user's public profile information.
+
+```bash
+GET /rest/v1/profiles
+```
+
+### Query Parameters
+
+<ParamField query="select" type="string" default="*">
+  Specify which columns to return. Omit sensitive fields like email unless authenticated.
+  
+  Example: `select=id,username,full_name,avatar_url,bio`
+</ParamField>
+
+<ParamField query="id" type="string">
+  Filter by user ID (UUID).
+  
+  Example: `id=eq.123e4567-e89b-12d3-a456-426614174000`
+</ParamField>
+
+<ParamField query="username" type="string">
+  Filter by username.
+  
+  Example: `username=eq.johndoe`
+</ParamField>
+
+<ParamField query="role" type="string">
+  Filter by role: `user`, `member`, or `admin`.
+  
+  Example: `role=eq.member`
+</ParamField>
+
+<ParamField query="membership_status" type="string">
+  Filter by membership status: `none`, `pending`, `approved`, or `rejected`.
+  
+  Example: `membership_status=eq.approved`
+</ParamField>
+
+### Request Example
+
+```bash
+curl "https://YOUR_PROJECT_ID.supabase.co/rest/v1/profiles?username=eq.johndoe&select=*" \
+  -H "apikey: YOUR_ANON_KEY" \
+  -H "Authorization: Bearer YOUR_ANON_KEY"
+```
+
+### Response Schema
+
+<ResponseField name="id" type="string" required>
+  Unique identifier (UUID) matching the auth.users table
+</ResponseField>
+
+<ResponseField name="username" type="string">
+  Unique username for the profile
+</ResponseField>
+
+<ResponseField name="full_name" type="string" required>
+  User's full display name
+</ResponseField>
+
+<ResponseField name="email" type="string" required>
+  User's email address (only visible to the authenticated user or admins)
+</ResponseField>
+
+<ResponseField name="avatar_url" type="string">
+  URL to the user's avatar image
+</ResponseField>
+
+<ResponseField name="bio" type="string">
+  User's biography or description
+</ResponseField>
+
+<ResponseField name="role" type="string" required>
+  User role: `user`, `member`, or `admin`
+</ResponseField>
+
+<ResponseField name="membership_status" type="string" required>
+  Membership application status: `none`, `pending`, `approved`, or `rejected`
+</ResponseField>
+
+<ResponseField name="website" type="string">
+  User's website URL
+</ResponseField>
+
+<ResponseField name="behance" type="string">
+  Behance profile URL or username
+</ResponseField>
+
+<ResponseField name="twitter" type="string">
+  Twitter/X handle
+</ResponseField>
+
+<ResponseField name="instagram" type="string">
+  Instagram handle
+</ResponseField>
+
+<ResponseField name="linkedin" type="string">
+  LinkedIn profile URL
+</ResponseField>
+
+<ResponseField name="paypal_me" type="string">
+  PayPal.me username for donations/payments
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp of profile creation
+</ResponseField>
+
+<ResponseField name="updated_at" type="string">
+  ISO 8601 timestamp of last profile update
+</ResponseField>
+
+### Response Example
+
+```json
+[
+  {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "username": "johndoe",
+    "full_name": "John Doe",
+    "email": "john@example.com",
+    "avatar_url": "https://storage.supabase.co/object/public/avatars/johndoe.jpg",
+    "bio": "Type designer specializing in geometric sans-serifs. Creating fonts for modern interfaces.",
+    "role": "member",
+    "membership_status": "approved",
+    "website": "https://johndoe.design",
+    "behance": "johndoe",
+    "twitter": "@johndoe",
+    "instagram": "johndoe_type",
+    "linkedin": "https://linkedin.com/in/johndoe",
+    "paypal_me": "johndoe",
+    "created_at": "2023-06-15T08:20:00Z",
+    "updated_at": "2024-03-10T14:30:00Z"
+  }
+]
+```
+
+## Get Profile by ID
+
+Retrieve a specific user profile.
+
+```bash
+GET /rest/v1/profiles?id=eq.{user_id}&select=*
+```
+
+### Request Example
+
+```bash
+curl "https://YOUR_PROJECT_ID.supabase.co/rest/v1/profiles?id=eq.123e4567-e89b-12d3-a456-426614174000&select=*" \
+  -H "apikey: YOUR_ANON_KEY" \
+  -H "Authorization: Bearer YOUR_ANON_KEY"
+```
+
+## Get All Members
+
+Retrieve profiles of approved members (font contributors).
+
+```bash
+GET /rest/v1/profiles?role=eq.member&membership_status=eq.approved&select=*
+```
+
+### Request Example
+
+```bash
+curl "https://YOUR_PROJECT_ID.supabase.co/rest/v1/profiles?role=eq.member&membership_status=eq.approved&select=id,username,full_name,avatar_url,bio" \
+  -H "apikey: YOUR_ANON_KEY" \
+  -H "Authorization: Bearer YOUR_ANON_KEY"
+```
+
+### Response Example
+
+```json
+[
+  {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "username": "johndoe",
+    "full_name": "John Doe",
+    "avatar_url": "https://storage.supabase.co/object/public/avatars/johndoe.jpg",
+    "bio": "Type designer specializing in geometric sans-serifs."
+  },
+  {
+    "id": "987e6543-e21b-43d2-b654-426614174111",
+    "username": "janetype",
+    "full_name": "Jane Smith",
+    "avatar_url": "https://storage.supabase.co/object/public/avatars/janetype.jpg",
+    "bio": "Creating elegant serif typefaces for editorial design."
+  }
+]
+```
+
+## Update Profile
+
+Update the authenticated user's profile. Requires user authentication.
+
+```bash
+PATCH /rest/v1/profiles?id=eq.{user_id}
+```
+
+<Warning>
+  Users can only update their own profile. Row Level Security (RLS) policies enforce this restriction.
+</Warning>
+
+### Request Body
+
+<ParamField body="full_name" type="string">
+  User's full display name
+</ParamField>
+
+<ParamField body="username" type="string">
+  Unique username (must be unique across all profiles)
+</ParamField>
+
+<ParamField body="bio" type="string">
+  Biography or description
+</ParamField>
+
+<ParamField body="avatar_url" type="string">
+  URL to avatar image
+</ParamField>
+
+<ParamField body="website" type="string">
+  Website URL
+</ParamField>
+
+<ParamField body="behance" type="string">
+  Behance profile
+</ParamField>
+
+<ParamField body="twitter" type="string">
+  Twitter/X handle
+</ParamField>
+
+<ParamField body="instagram" type="string">
+  Instagram handle
+</ParamField>
+
+<ParamField body="linkedin" type="string">
+  LinkedIn profile URL
+</ParamField>
+
+<ParamField body="paypal_me" type="string">
+  PayPal.me username
+</ParamField>
+
+### Request Example
+
+```bash
+curl "https://YOUR_PROJECT_ID.supabase.co/rest/v1/profiles?id=eq.123e4567-e89b-12d3-a456-426614174000" \
+  -X PATCH \
+  -H "apikey: YOUR_ANON_KEY" \
+  -H "Authorization: Bearer USER_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Prefer: return=representation" \
+  -d '{
+    "full_name": "John Doe",
+    "bio": "Updated biography text",
+    "website": "https://johndoe.design",
+    "twitter": "@johndoe"
+  }'
+```
+
+### Response Example
+
+```json
+[
+  {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "username": "johndoe",
+    "full_name": "John Doe",
+    "bio": "Updated biography text",
+    "website": "https://johndoe.design",
+    "twitter": "@johndoe",
+    "updated_at": "2024-03-12T16:45:00Z"
+  }
+]
+```
+
+## Get Profile with Fonts
+
+Retrieve a profile with all fonts uploaded by the user.
+
+```bash
+GET /rest/v1/profiles?id=eq.{user_id}&select=*,fonts(*)
+```
+
+### Request Example
+
+```bash
+curl "https://YOUR_PROJECT_ID.supabase.co/rest/v1/profiles?username=eq.johndoe&select=id,username,full_name,avatar_url,bio,fonts(id,name,slug,category,downloads)" \
+  -H "apikey: YOUR_ANON_KEY" \
+  -H "Authorization: Bearer YOUR_ANON_KEY"
+```
+
+### Response Example
+
+```json
+[
+  {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "username": "johndoe",
+    "full_name": "John Doe",
+    "avatar_url": "https://storage.supabase.co/object/public/avatars/johndoe.jpg",
+    "bio": "Type designer specializing in geometric sans-serifs.",
+    "fonts": [
+      {
+        "id": "font-uuid-1",
+        "name": "Geometric Pro",
+        "slug": "geometric-pro",
+        "category": "sans-serif",
+        "downloads": 1542
+      },
+      {
+        "id": "font-uuid-2",
+        "name": "Modern Display",
+        "slug": "modern-display",
+        "category": "display",
+        "downloads": 892
+      }
+    ]
+  }
+]
+```
+
+## Roles and Permissions
+
+<AccordionGroup>
+  <Accordion title="User (default)">
+    Default role for all new accounts:
+    
+    - Can browse and download fonts
+    - Can favorite fonts
+    - Cannot upload fonts
+    - Can apply for membership
+  </Accordion>
+
+  <Accordion title="Member">
+    Approved contributors who can upload fonts:
+    
+    - All user permissions
+    - Can upload and manage their own fonts
+    - Can edit their own font metadata
+    - Cannot modify other users' fonts
+    - Profile listed in the Members directory
+  </Accordion>
+
+  <Accordion title="Admin">
+    Platform administrators:
+    
+    - All member permissions
+    - Can approve/reject membership applications
+    - Can edit any font
+    - Can manage featured/trending status
+    - Full database access
+  </Accordion>
+</AccordionGroup>
+
+## Membership Status
+
+<ResponseField name="none" type="status">
+  User has not applied for membership
+</ResponseField>
+
+<ResponseField name="pending" type="status">
+  User has submitted a membership application awaiting review
+</ResponseField>
+
+<ResponseField name="approved" type="status">
+  User's membership application has been approved (role elevated to `member`)
+</ResponseField>
+
+<ResponseField name="rejected" type="status">
+  User's membership application was rejected
+</ResponseField>
+
+## Usage Example (JavaScript)
+
+Here's how the NoBadFonts application works with profiles:
+
+```typescript
+import { supabase } from '../lib/supabase'
+
+// Get current user's profile
+const { data: { session } } = await supabase.auth.getSession()
+if (session?.user) {
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', session.user.id)
+    .single()
+  
+  console.log(`Welcome, ${profile.full_name}!`)
+  console.log(`Role: ${profile.role}`)
+}
+
+// Get all approved members
+const { data: members } = await supabase
+  .from('profiles')
+  .select('id, username, full_name, avatar_url, bio')
+  .eq('role', 'member')
+  .eq('membership_status', 'approved')
+  .order('full_name')
+
+// Update current user's profile
+const { error } = await supabase
+  .from('profiles')
+  .update({
+    bio: 'New bio text',
+    website: 'https://mysite.com'
+  })
+  .eq('id', session.user.id)
+```
+
+## Privacy and Security
+
+<Note>
+  Row Level Security (RLS) policies protect profile data:
+  
+  - All users can view public profile fields (name, username, avatar, bio, social links)
+  - Only the profile owner can view their email address
+  - Only the profile owner can update their profile
+  - Admins have full access to all profiles
+  - Role and membership status changes are restricted to admins
+</Note>
+
+## Error Responses
+
+<Expandable title="404 - Profile Not Found">
+  ```json
+  {
+    "code": "PGRST116",
+    "message": "The result contains 0 rows",
+    "details": null,
+    "hint": null
+  }
+  ```
+  
+  **Status Code**: `406 Not Acceptable` (when using `.single()`)
+</Expandable>
+
+<Expandable title="403 - Forbidden">
+  ```json
+  {
+    "code": "42501",
+    "message": "new row violates row-level security policy",
+    "details": null,
+    "hint": null
+  }
+  ```
+  
+  Occurs when trying to update another user's profile.
+  
+  **Status Code**: `403 Forbidden`
+</Expandable>
+
+<Expandable title="409 - Username Already Exists">
+  ```json
+  {
+    "code": "23505",
+    "message": "duplicate key value violates unique constraint",
+    "details": "Key (username)=(johndoe) already exists.",
+    "hint": null
+  }
+  ```
+  
+  Occurs when trying to use a username that's already taken.
+  
+  **Status Code**: `409 Conflict`
+</Expandable>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="API Overview" icon="book-open" href="/api/overview">
+    Learn about the API architecture
+  </Card>
+  <Card title="Fonts Endpoint" icon="font" href="/api/fonts">
+    Query the fonts collection
+  </Card>
+</CardGroup>

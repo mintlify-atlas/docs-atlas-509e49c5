@@ -1,0 +1,290 @@
+---
+title: Upload system
+description: Submit fonts to NoBadFonts with support for multiple variants, formats, and gallery images
+---
+
+The upload system allows members and admins to contribute fonts to the NoBadFonts catalog with a streamlined, multi-step form.
+
+## Access requirements
+
+Uploading fonts is restricted to:
+- **Members**: Users with approved contributor access
+- **Admins**: Platform administrators
+
+Regular users see an access restriction page with options to return home or request access (coming soon).
+
+## Upload workflow
+
+The upload form is organized into sections:
+
+### 1. Font metadata
+
+Provide basic information about the font:
+
+<Steps>
+  <Step title="Font name">
+    The display name of the font (required). Used to generate the URL slug.
+  </Step>
+  <Step title="Designer name">
+    Font creator or foundry (optional). Defaults to "Unknown" if left blank.
+  </Step>
+</Steps>
+
+### 2. Font variants
+
+Add one or more font variants with different weights and styles:
+
+#### Standard variants
+
+Choose from predefined variant names:
+- Thin, Extra Light, Light
+- Regular, Medium, Semi Bold
+- Bold, Extra Bold, Black
+- All italic versions of the above
+
+#### Custom variants
+
+Add variants with custom names like:
+- "Demi Bold"
+- "Display"
+- "Condensed"
+- "Extended"
+
+#### Variable fonts
+
+Mark a variant as "Variable" for variable font files.
+
+#### File formats
+
+Upload up to 4 formats per variant:
+
+<Tabs>
+  <Tab title="WOFF2">
+    **Recommended**: Best compression and browser support. Used by default for web display.
+  </Tab>
+  <Tab title="WOFF">
+    Fallback for older browsers. Good compression.
+  </Tab>
+  <Tab title="TTF">
+    TrueType format. Used for desktop installation and conversion.
+  </Tab>
+  <Tab title="OTF">
+    OpenType format. Supports advanced typography features.
+  </Tab>
+</Tabs>
+
+<Warning>
+  At least one variant with at least one file format is required to submit the form.
+</Warning>
+
+#### Automatic WOFF2 conversion
+
+If you upload TTF or OTF but skip WOFF2, the system queues automatic conversion:
+
+1. Upload completes with available formats
+2. Background process converts TTF/OTF to WOFF2
+3. Converted WOFF2 is added to the font automatically
+4. Font page updates with new format (no manual action needed)
+
+#### Managing variants
+
+<CardGroup cols={3}>
+  <Card title="Add standard" icon="plus">
+    Adds next available standard variant name from the preset list
+  </Card>
+  <Card title="Add custom" icon="pencil">
+    Adds a blank variant where you type the name
+  </Card>
+  <Card title="Remove" icon="x">
+    Deletes a variant from the form (not submitted variants)
+  </Card>
+</CardGroup>
+
+### 3. Banner gallery
+
+Upload preview images to showcase the font (optional but recommended):
+
+#### Adding images
+
+**File upload**: Click the upload zone or drag and drop multiple images:
+- Formats: PNG, JPEG, WebP, AVIF
+- Multiple files at once
+- Preview thumbnails shown immediately
+
+**URL input**: Click "Add URL" to embed images from external sources:
+- Paste the full image URL
+- Useful for large files or externally hosted images
+- No file size limits
+
+#### Gallery management
+
+- **Reorder**: The first image becomes the preview thumbnail
+- **Remove**: Click the X on any image to delete it
+- **Mixed sources**: Combine uploaded files and external URLs
+
+<Tip>
+  Upload at least one high-quality preview image. It's the first thing users see on the font card and details page.
+</Tip>
+
+### 4. Categories
+
+Select relevant tags from organized groups:
+
+<AccordionGroup>
+  <Accordion title="Classification">
+    Core type categories: Sans, Serif, Slab Serif, Display, Monospace, Script, Calligraphy, Brush, Handwritten, Signature
+  </Accordion>
+
+  <Accordion title="Style">
+    Visual characteristics: Modern, Classic, Minimal, Bold, Elegant, Luxury, Playful, Experimental, Brutalist, Geometric, Organic
+  </Accordion>
+
+  <Accordion title="Use case">
+    Intended applications: Branding, Logo, Headline, Poster, Corporate, Tech/UI, Social Media
+  </Accordion>
+
+  <Accordion title="Weight & shape">
+    Structural attributes: Hairline, Light, Normal Width, Heavy, Tall, Condensed, Wide, Extended
+  </Accordion>
+
+  <Accordion title="Construction & features">
+    Technical details: Ink Trap, Rounded, Square, Stencil, Outline, Inline, Pixel/Bitmap, Messy
+  </Accordion>
+
+  <Accordion title="Era & vibe">
+    Stylistic period: Casual, Retro, Vintage, Cyberpunk, Futuristic, Gothic, Y2K
+  </Accordion>
+</AccordionGroup>
+
+Select multiple categories to improve discoverability. At least one category is required.
+
+## File structure
+
+Uploaded files are organized in Supabase Storage:
+
+```
+fonts/
+├── {user_id}/
+│   └── {font_slug}/
+│       ├── variants/
+│       │   ├── Regular/
+│       │   │   ├── {font-slug}-regular.woff2
+│       │   │   ├── {font-slug}-regular.woff
+│       │   │   ├── {font-slug}-regular.ttf
+│       │   │   └── {font-slug}-regular.otf
+│       │   └── Bold/
+│       │       └── ...
+│       └── gallery/
+│           ├── {timestamp}-preview1.png
+│           └── {timestamp}-preview2.jpg
+```
+
+## Database records
+
+Submitting the form creates:
+
+1. **Font record** in `fonts` table:
+   - Name, designer, slug, categories
+   - Gallery images array
+   - Preview image (first gallery image)
+   - Timestamps and user ID
+
+2. **Variant records** in `font_variants` table:
+   - One row per variant
+   - Links to uploaded file URLs
+   - File sizes for bandwidth tracking
+   - Associated with parent font ID
+
+## Form validation
+
+<Accordion title="Font name">
+  - Cannot be empty
+  - Checked for duplicates (slug uniqueness)
+  - Trimmed of whitespace
+</Accordion>
+
+<Accordion title="Designer">
+  - Optional field
+  - Defaults to "Unknown"
+</Accordion>
+
+<Accordion title="Variants">
+  - At least one variant required
+  - At least one file format per variant
+  - Duplicate variant names prevented
+</Accordion>
+
+<Accordion title="Categories">
+  - At least one category required
+  - No maximum limit
+</Accordion>
+
+## After submission
+
+<Steps>
+  <Step title="Processing">
+    Files upload to Supabase Storage sequentially. Large files may take a moment.
+  </Step>
+  <Step title="Database insert">
+    Font and variant records created. Font is published immediately.
+  </Step>
+  <Step title="Background tasks">
+    WOFF2 conversion queued if needed. Runs asynchronously.
+  </Step>
+  <Step title="Redirect">
+    You're taken to the new font's detail page. The font is live in the catalog.
+  </Step>
+</Steps>
+
+## Admin tools
+
+Admins see additional features on the upload page:
+
+### WOFF2 scanner
+
+A diagnostic tool that:
+- Scans all fonts in the database
+- Identifies fonts missing WOFF2 files
+- Shows which fonts have source files (TTF/OTF) available
+- Allows bulk triggering of WOFF2 conversions
+
+Useful for maintaining the catalog and optimizing web performance.
+
+## Error handling
+
+<Warning>
+  If upload fails, check:
+  - File sizes (very large files may timeout)
+  - File formats (accept only font formats)
+  - Network connection
+  - Browser console for specific errors
+</Warning>
+
+Common errors:
+- **Duplicate font name**: A font with the same slug already exists
+- **Upload error**: Network issue or storage quota
+- **Database error**: Missing required fields or constraint violation
+
+The form shows specific error messages to help you fix issues.
+
+## Best practices
+
+<Tip>
+  **Name your files clearly**: Use descriptive names like `MyFont-Bold.ttf` instead of `font1.ttf`
+</Tip>
+
+<Tip>
+  **Upload WOFF2 when possible**: Faster page loads and better user experience than automatic conversion
+</Tip>
+
+<Tip>
+  **Include multiple variants**: Fonts with Regular, Bold, and Italic are more useful than single-weight fonts
+</Tip>
+
+<Tip>
+  **Add preview images**: High-quality banners increase views and downloads significantly
+</Tip>
+
+<Tip>
+  **Tag accurately**: Choose categories that genuinely describe the font for better search results
+</Tip>

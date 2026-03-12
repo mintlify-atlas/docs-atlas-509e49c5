@@ -1,0 +1,346 @@
+---
+title: 'Font Variants Endpoint'
+description: 'Access different weights and styles for each font'
+icon: 'palette'
+---
+
+## Overview
+
+Font variants represent different weights, styles, and formats of a font family. Each variant includes URLs to download files in multiple formats (WOFF2, WOFF, TTF, OTF) along with file size information.
+
+## Get Font Variants
+
+Retrieve variants for a specific font or query all variants.
+
+```bash
+GET /rest/v1/font_variants
+```
+
+### Query Parameters
+
+<ParamField query="select" type="string" default="*">
+  Specify which columns to return. Use `*` for all columns.
+  
+  Example: `select=id,variant_name,woff2_url,file_size_woff2`
+</ParamField>
+
+<ParamField query="font_id" type="string">
+  Filter variants by font ID.
+  
+  Example: `font_id=eq.123e4567-e89b-12d3-a456-426614174000`
+</ParamField>
+
+<ParamField query="order" type="string" default="order_index.asc">
+  Sort results. Typically ordered by `order_index` for proper display sequence.
+  
+  Example: `order=order_index.asc`
+</ParamField>
+
+### Request Example
+
+```bash
+curl "https://YOUR_PROJECT_ID.supabase.co/rest/v1/font_variants?font_id=eq.123e4567-e89b-12d3-a456-426614174000&select=*&order=order_index.asc" \
+  -H "apikey: YOUR_ANON_KEY" \
+  -H "Authorization: Bearer YOUR_ANON_KEY"
+```
+
+### Response Schema
+
+<ResponseField name="id" type="string" required>
+  Unique identifier (UUID) for the variant
+</ResponseField>
+
+<ResponseField name="font_id" type="string" required>
+  UUID of the parent font
+</ResponseField>
+
+<ResponseField name="variant_name" type="string" required>
+  Human-readable name of the variant (e.g., "Regular", "Bold", "Bold Italic")
+</ResponseField>
+
+<ResponseField name="order_index" type="integer">
+  Sort order for displaying variants (0-based index)
+</ResponseField>
+
+<ResponseField name="woff2_url" type="string">
+  URL to the WOFF2 font file (preferred format for modern browsers)
+</ResponseField>
+
+<ResponseField name="file_size_woff2" type="integer">
+  File size in bytes for WOFF2 format
+</ResponseField>
+
+<ResponseField name="woff_url" type="string">
+  URL to the WOFF font file
+</ResponseField>
+
+<ResponseField name="file_size_woff" type="integer">
+  File size in bytes for WOFF format
+</ResponseField>
+
+<ResponseField name="ttf_url" type="string">
+  URL to the TTF (TrueType) font file
+</ResponseField>
+
+<ResponseField name="file_size_ttf" type="integer">
+  File size in bytes for TTF format
+</ResponseField>
+
+<ResponseField name="otf_url" type="string">
+  URL to the OTF (OpenType) font file
+</ResponseField>
+
+<ResponseField name="file_size_otf" type="integer">
+  File size in bytes for OTF format
+</ResponseField>
+
+<ResponseField name="created_at" type="string" required>
+  ISO 8601 timestamp of creation
+</ResponseField>
+
+### Response Example
+
+```json
+[
+  {
+    "id": "variant-uuid-1",
+    "font_id": "123e4567-e89b-12d3-a456-426614174000",
+    "variant_name": "Regular",
+    "order_index": 0,
+    "woff2_url": "https://storage.supabase.co/object/public/fonts/user-id/inter-display/variants/regular/inter-display-regular.woff2",
+    "file_size_woff2": 62400,
+    "woff_url": "https://storage.supabase.co/object/public/fonts/user-id/inter-display/variants/regular/inter-display-regular.woff",
+    "file_size_woff": 78200,
+    "ttf_url": "https://storage.supabase.co/object/public/fonts/user-id/inter-display/variants/regular/inter-display-regular.ttf",
+    "file_size_ttf": 142600,
+    "otf_url": null,
+    "file_size_otf": null,
+    "created_at": "2024-01-15T10:30:00Z"
+  },
+  {
+    "id": "variant-uuid-2",
+    "font_id": "123e4567-e89b-12d3-a456-426614174000",
+    "variant_name": "Bold",
+    "order_index": 1,
+    "woff2_url": "https://storage.supabase.co/object/public/fonts/user-id/inter-display/variants/bold/inter-display-bold.woff2",
+    "file_size_woff2": 64200,
+    "woff_url": "https://storage.supabase.co/object/public/fonts/user-id/inter-display/variants/bold/inter-display-bold.woff",
+    "file_size_woff": 80100,
+    "ttf_url": "https://storage.supabase.co/object/public/fonts/user-id/inter-display/variants/bold/inter-display-bold.ttf",
+    "file_size_ttf": 145800,
+    "otf_url": null,
+    "file_size_otf": null,
+    "created_at": "2024-01-15T10:30:00Z"
+  },
+  {
+    "id": "variant-uuid-3",
+    "font_id": "123e4567-e89b-12d3-a456-426614174000",
+    "variant_name": "Bold Italic",
+    "order_index": 2,
+    "woff2_url": "https://storage.supabase.co/object/public/fonts/user-id/inter-display/variants/bold-italic/inter-display-bold-italic.woff2",
+    "file_size_woff2": 65800,
+    "woff_url": "https://storage.supabase.co/object/public/fonts/user-id/inter-display/variants/bold-italic/inter-display-bold-italic.woff",
+    "file_size_woff": 82400,
+    "ttf_url": "https://storage.supabase.co/object/public/fonts/user-id/inter-display/variants/bold-italic/inter-display-bold-italic.ttf",
+    "file_size_ttf": 148200,
+    "otf_url": null,
+    "file_size_otf": null,
+    "created_at": "2024-01-15T10:30:00Z"
+  }
+]
+```
+
+## Get Variants for a Font (Embedded)
+
+The recommended way to get variants is to embed them in the font query:
+
+```bash
+GET /rest/v1/fonts?slug=eq.{font_slug}&select=*,font_variants(*)
+```
+
+### Request Example
+
+```bash
+curl "https://YOUR_PROJECT_ID.supabase.co/rest/v1/fonts?slug=eq.inter-display&select=*,font_variants(*)" \
+  -H "apikey: YOUR_ANON_KEY" \
+  -H "Authorization: Bearer YOUR_ANON_KEY"
+```
+
+This returns the font object with a nested `font_variants` array, providing all data in a single request.
+
+## Usage Example (JavaScript)
+
+Here's how the NoBadFonts application fetches font variants:
+
+```typescript
+import { supabase } from '../lib/supabase'
+
+// Get font with all variants, ordered correctly
+const { data: fontData, error } = await supabase
+  .from('fonts')
+  .select('*, font_variants(*)')
+  .eq('slug', 'inter-display')
+  .order('order_index', { foreignTable: 'font_variants', ascending: true })
+  .single()
+
+if (fontData) {
+  console.log(`Font: ${fontData.name}`)
+  console.log(`Variants: ${fontData.font_variants.length}`)
+  
+  fontData.font_variants.forEach(variant => {
+    console.log(`- ${variant.variant_name}: ${variant.woff2_url}`)
+  })
+}
+```
+
+<Note>
+  The code above is from `src/hooks/useFont.ts:24-29`
+</Note>
+
+### Fetching Variants Separately
+
+When using the `search_fonts` RPC function, variants are fetched in a separate query:
+
+```typescript
+// First, search for fonts
+const { data } = await supabase.rpc('search_fonts', {
+  query: 'modern',
+  sort_by: 'trending',
+  limit_val: 16
+})
+
+let fontsWithVariants = data || []
+
+if (fontsWithVariants.length > 0) {
+  // Get all font IDs
+  const fontIds = fontsWithVariants.map(f => f.id)
+  
+  // Fetch variants for all fonts
+  const { data: variantsData } = await supabase
+    .from('font_variants')
+    .select('*')
+    .in('font_id', fontIds)
+  
+  if (variantsData) {
+    // Attach variants to their respective fonts
+    fontsWithVariants = fontsWithVariants.map(f => ({
+      ...f,
+      font_variants: variantsData.filter(v => v.font_id === f.id)
+    }))
+  }
+}
+```
+
+<Note>
+  The code above is from `src/hooks/useFonts.ts:44-55`
+</Note>
+
+## File Formats
+
+<AccordionGroup>
+  <Accordion title="WOFF2 (Recommended)">
+    **Web Open Font Format 2** is the preferred format for web use:
+    
+    - Best compression (30-50% smaller than TTF)
+    - Supported by all modern browsers
+    - Optimized for web delivery
+    - Generated automatically during upload using WebAssembly
+    
+    Browser support: Chrome 36+, Firefox 39+, Safari 10+, Edge 14+
+  </Accordion>
+
+  <Accordion title="WOFF">
+    **Web Open Font Format** is the predecessor to WOFF2:
+    
+    - Good compression (smaller than TTF but larger than WOFF2)
+    - Wider browser support than WOFF2
+    - Used as fallback for older browsers
+    
+    Browser support: Chrome 5+, Firefox 3.6+, Safari 5.1+, IE 9+
+  </Accordion>
+
+  <Accordion title="TTF">
+    **TrueType Font** is a traditional desktop font format:
+    
+    - Larger file size (no compression)
+    - Universal compatibility
+    - Suitable for desktop applications
+    - Can be converted to WOFF2 for web use
+    
+    Compatible with all major operating systems.
+  </Accordion>
+
+  <Accordion title="OTF">
+    **OpenType Font** is an extension of TrueType:
+    
+    - Supports advanced typography features
+    - Larger file size (no compression)
+    - Preferred by professional designers
+    - Less common in the NoBadFonts collection
+    
+    Compatible with all major operating systems.
+  </Accordion>
+</AccordionGroup>
+
+## Storage Structure
+
+Font variant files are organized in Supabase Storage with this structure:
+
+```
+fonts/
+└── {user_id}/
+    └── {font_slug}/
+        └── variants/
+            ├── regular/
+            │   ├── {font-slug}-regular.woff2
+            │   ├── {font-slug}-regular.woff
+            │   └── {font-slug}-regular.ttf
+            ├── bold/
+            │   ├── {font-slug}-bold.woff2
+            │   ├── {font-slug}-bold.woff
+            │   └── {font-slug}-bold.ttf
+            └── bold-italic/
+                ├── {font-slug}-bold-italic.woff2
+                ├── {font-slug}-bold-italic.woff
+                └── {font-slug}-bold-italic.ttf
+```
+
+<Note>
+  This structure is managed automatically by the upload pipeline in `src/pages/Upload.tsx:40`
+</Note>
+
+## Error Responses
+
+<Expandable title="404 - Variants Not Found">
+  ```json
+  []
+  ```
+  
+  Returns an empty array when no variants exist for the specified font_id.
+  
+  **Status Code**: `200 OK`
+</Expandable>
+
+<Expandable title="400 - Invalid Font ID">
+  ```json
+  {
+    "code": "22P02",
+    "message": "invalid input syntax for type uuid",
+    "details": null,
+    "hint": null
+  }
+  ```
+  
+  **Status Code**: `400 Bad Request`
+</Expandable>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Fonts Endpoint" icon="font" href="/api/fonts">
+    Learn about the fonts endpoint
+  </Card>
+  <Card title="Profiles" icon="user" href="/api/profiles">
+    Access designer profiles
+  </Card>
+</CardGroup>

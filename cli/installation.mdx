@@ -1,0 +1,109 @@
+---
+title: 'Installation'
+description: 'Install the NoBadFonts CLI tool to manage fonts from your terminal'
+icon: 'download'
+---
+
+## Quick Installation
+
+The NoBadFonts CLI can be used instantly with `npx` or installed globally on your system.
+
+<CodeGroup>
+
+```bash npx (Recommended)
+npx nobadfonts-cli
+```
+
+```bash Global Install
+npm install -g nobadfonts-cli
+```
+
+```bash Yarn
+yarn global add nobadfonts-cli
+```
+
+```bash pnpm
+pnpm add -g nobadfonts-cli
+```
+
+</CodeGroup>
+
+<Note>
+Using `npx` is recommended as it always runs the latest version without requiring a global installation.
+</Note>
+
+## Verify Installation
+
+After global installation, verify the CLI is working:
+
+```bash
+nobadfonts
+```
+
+You should see the help output:
+
+```bash
+Usage: npx nobadfonts <command> <font-name> [font-name-2] ...
+Commands:
+  add <fonts...>       Import fonts via CSS (Lightweight)
+  download <fonts...>  Download font files locally
+  list                 List available fonts
+```
+
+## System Requirements
+
+<ParamField path="Node.js" type="requirement">
+  Node.js 14.0 or higher is required
+</ParamField>
+
+<ParamField path="npm" type="requirement">
+  npm 6.0 or higher (comes with Node.js)
+</ParamField>
+
+<ParamField path="Operating System" type="requirement">
+  Works on macOS, Windows, and Linux
+</ParamField>
+
+## Environment Setup
+
+The CLI requires environment variables to connect to the NoBadFonts API. Create a `.env` file in your project root:
+
+```bash .env
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+<Warning>
+These environment variables are required for the CLI to function. Without them, API requests will fail.
+</Warning>
+
+For more details on configuration, see the [Configuration](/cli/configuration) page.
+
+## Upgrading
+
+If you're using `npx`, you'll automatically get the latest version each time you run the command.
+
+For global installations, upgrade with:
+
+```bash
+npm update -g nobadfonts-cli
+```
+
+## Uninstalling
+
+To remove a global installation:
+
+```bash
+npm uninstall -g nobadfonts-cli
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/cli/quickstart">
+    Get started with common CLI usage
+  </Card>
+  <Card title="Commands" icon="terminal" href="/cli/commands/list">
+    Explore all available commands
+  </Card>
+</CardGroup>

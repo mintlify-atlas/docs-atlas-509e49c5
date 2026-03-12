@@ -1,0 +1,223 @@
+---
+title: 'add'
+description: 'Import fonts via lightweight CSS imports'
+icon: 'plus'
+---
+
+## Overview
+
+The `add` command is the fastest way to integrate fonts into your project. It adds CSS `@import` statements to your `src/fonts.css` file, referencing fonts hosted on NoBadFonts CDN.
+
+## Syntax
+
+```bash
+npx nobadfonts add <font-name> [font-name-2] [font-name-3] ...
+```
+
+## Arguments
+
+<ParamField path="font-name" type="string" required>
+  The name or slug of the font to add. Can be in any case (e.g., "Inter", "inter", "INTER").
+</ParamField>
+
+<ParamField path="additional fonts" type="string" optional>
+  You can specify multiple font names separated by spaces to add multiple fonts in one command.
+</ParamField>
+
+## Examples
+
+### Add a Single Font
+
+```bash
+npx nobadfonts add "Inter"
+```
+
+**Output:**
+```bash
+⠋ Searching for font: Inter...
+✔ Found font: Inter
+⠋ Updating src/fonts.css...
+✔ Imported "Inter" to src/fonts.css
+
+Success! To use the font:
+1. In CSS: font-family: var(--font-inter);
+2. In Tailwind: class="font-inter"
+(Make sure './fonts.css' is imported in your main CSS file)
+```
+
+### Add Multiple Fonts
+
+```bash
+npx nobadfonts add "Inter" "Roboto" "Poppins"
+```
+
+Each font will be processed individually with progress indicators.
+
+### Case-Insensitive Names
+
+```bash
+npx nobadfonts add "satoshi"
+npx nobadfonts add "SATOSHI"
+npx nobadfonts add "Satoshi"
+```
+
+All three commands above will find and add the same font.
+
+## What It Does
+
+<Steps>
+  <Step title="Searches for the Font">
+    The CLI queries the NoBadFonts API to find the font by name or slug.
+  </Step>
+  
+  <Step title="Creates/Updates fonts.css">
+    If `src/fonts.css` doesn't exist, it's created. Otherwise, it's updated.
+  </Step>
+  
+  <Step title="Adds CSS Import">
+    Prepends an `@import` statement to the top of the file:
+    
+    ```css
+    @import url("https://www.nobadfonts.in/css/inter");
+    ```
+  </Step>
+  
+  <Step title="Adds Theme Variable">
+    Appends a `@theme` block with a CSS custom property:
+    
+    ```css
+    @theme {
+      --font-inter: "Inter", sans-serif;
+    }
+    ```
+  </Step>
+</Steps>
+
+## Generated Output
+
+After running `add "Inter"`, your `src/fonts.css` will contain:
+
+```css src/fonts.css
+@import url("https://www.nobadfonts.in/css/inter");
+
+@theme {
+  --font-inter: "Inter", sans-serif;
+}
+```
+
+## Usage in Your Code
+
+### Plain CSS
+
+```css
+body {
+  font-family: var(--font-inter);
+}
+
+h1 {
+  font-family: var(--font-inter);
+  font-weight: 700;
+}
+```
+
+### Tailwind CSS
+
+```html
+<div class="font-inter">
+  <h1 class="text-4xl font-bold">Hello World</h1>
+  <p class="text-base">This uses Inter font.</p>
+</div>
+```
+
+### React/Next.js
+
+```jsx
+import './fonts.css';
+
+export default function App() {
+  return (
+    <div className="font-inter">
+      <h1>Styled with Inter</h1>
+    </div>
+  );
+}
+```
+
+## Error Handling
+
+### Font Not Found
+
+If the font doesn't exist in the database:
+
+```bash
+npx nobadfonts add "NonexistentFont"
+```
+
+**Output:**
+```bash
+⠋ Searching for font: NonexistentFont...
+✖ Font "NonexistentFont" not found.
+```
+
+### No Font Name Provided
+
+```bash
+npx nobadfonts add
+```
+
+**Output:**
+```bash
+Please specify at least one font name. Example: npx nobadfonts add "Inter" "Roboto"
+```
+
+### Font Already Added
+
+If you try to add a font that's already in `src/fonts.css`:
+
+```bash
+⠋ Searching for font: Inter...
+✔ Found font: Inter
+ℹ Font "Inter" is already imported in src/fonts.css
+```
+
+## Benefits vs. Download Command
+
+<CardGroup cols={2}>
+  <Card title="Lightweight" icon="feather">
+    No local file downloads - fonts load from CDN
+  </Card>
+  <Card title="Fast" icon="bolt">
+    Instant setup with minimal file changes
+  </Card>
+  <Card title="Always Updated" icon="refresh">
+    Fonts are automatically kept up-to-date on the CDN
+  </Card>
+  <Card title="Smaller Repo" icon="database">
+    No font files committed to version control
+  </Card>
+</CardGroup>
+
+## When to Use
+
+Use `add` when:
+- You want the fastest setup
+- You're okay with external CDN dependency
+- You want automatic font updates
+- You want to keep your repository small
+
+Use `download` instead when:
+- You need self-hosted fonts
+- You want full control over font files
+- You're building offline-capable apps
+- You need specific font file formats
+
+## See Also
+
+<CardGroup cols={2}>
+  <Card title="download" icon="download" href="/cli/commands/download">
+    Download fonts for self-hosting
+  </Card>
+  <Card title="list" icon="list" href="/cli/commands/list">
+    Browse available fonts
+  </Card>
+</CardGroup>

@@ -1,0 +1,338 @@
+---
+title: 'download'
+description: 'Download font files locally for self-hosting'
+icon: 'download'
+---
+
+## Overview
+
+The `download` command downloads font files to your local filesystem and generates `@font-face` declarations. This gives you full control over font hosting and eliminates external dependencies.
+
+## Syntax
+
+```bash
+npx nobadfonts download <font-name> [font-name-2] [font-name-3] ...
+```
+
+## Arguments
+
+<ParamField path="font-name" type="string" required>
+  The name or slug of the font to download. Case-insensitive.
+</ParamField>
+
+<ParamField path="additional fonts" type="string" optional>
+  Multiple font names can be specified to download several fonts at once.
+</ParamField>
+
+## Examples
+
+### Download a Single Font
+
+```bash
+npx nobadfonts download "Inter"
+```
+
+**Output:**
+```bash
+⠋ Searching for font: Inter...
+✔ Found font: Inter
+⠋ Downloading font files...
+✔ Files downloaded successfully.
+⠋ Updating CSS...
+✔ Updated src/fonts.css with @font-face definitions and @theme variable.
+
+Success! To use the font:
+1. In CSS: font-family: var(--font-inter);
+2. In Tailwind: class="font-inter"
+(Make sure to import './fonts.css' in your src/index.css or main execution file)
+```
+
+### Download Multiple Fonts
+
+```bash
+npx nobadfonts download "Inter" "Roboto" "Poppins"
+```
+
+Each font is processed sequentially with full progress feedback.
+
+### Download with Variants
+
+```bash
+npx nobadfonts download "Satoshi"
+```
+
+This downloads all available variants (Regular, Medium, Bold, etc.) and their italic counterparts.
+
+## What It Does
+
+<Steps>
+  <Step title="Fetches Font Metadata">
+    Queries the NoBadFonts API for font information, including all available variants.
+  </Step>
+  
+  <Step title="Creates Directory Structure">
+    Creates `public/fonts/{font-slug}/` directory for storing font files.
+  </Step>
+  
+  <Step title="Downloads Font Files">
+    Downloads available formats in priority order:
+    1. WOFF2 (modern browsers, best compression)
+    2. WOFF (broader compatibility)
+    3. TTF (TrueType, universal support)
+    4. OTF (OpenType, design software)
+  </Step>
+  
+  <Step title="Generates CSS">
+    Creates `@font-face` declarations for each variant and adds them to `src/fonts.css`.
+  </Step>
+  
+  <Step title="Adds Theme Variables">
+    Appends `@theme` block with CSS custom property for Tailwind integration.
+  </Step>
+</Steps>
+
+## File Structure
+
+After downloading "Inter", your project will have:
+
+```
+project/
+├── public/
+│   └── fonts/
+│       └── inter/
+│           ├── inter.woff2
+│           ├── inter.woff
+│           ├── inter.ttf
+│           ├── inter-Regular.woff2
+│           ├── inter-Bold.woff2
+│           ├── inter-Medium.woff2
+│           └── ... (other variants)
+└── src/
+    └── fonts.css
+```
+
+## Generated CSS
+
+The command generates comprehensive `@font-face` declarations:
+
+```css src/fonts.css
+/* Font: Inter (Added via NoBadFonts CLI) */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter/inter-Regular.woff2') format('woff2'),
+       url('/fonts/inter/inter-Regular.woff') format('woff'),
+       url('/fonts/inter/inter-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter/inter-Bold.woff2') format('woff2'),
+       url('/fonts/inter/inter-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter/inter-Medium.woff2') format('woff2'),
+       url('/fonts/inter/inter-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-inter: "Inter", sans-serif;
+}
+```
+
+## Font Weight Mapping
+
+The CLI automatically maps variant names to CSS font-weight values:
+
+<ParamField path="Thin" type="100">
+  Ultra-light weight
+</ParamField>
+
+<ParamField path="Extra Light / ExtraLight" type="200">
+  Very light weight
+</ParamField>
+
+<ParamField path="Light" type="300">
+  Light weight
+</ParamField>
+
+<ParamField path="Regular" type="400">
+  Normal/default weight
+</ParamField>
+
+<ParamField path="Medium" type="500">
+  Medium weight
+</ParamField>
+
+<ParamField path="Semi Bold / SemiBold" type="600">
+  Semi-bold weight
+</ParamField>
+
+<ParamField path="Bold" type="700">
+  Bold weight
+</ParamField>
+
+<ParamField path="Extra Bold / ExtraBold" type="800">
+  Very bold weight
+</ParamField>
+
+<ParamField path="Black" type="900">
+  Ultra-bold weight
+</ParamField>
+
+## Usage in Your Code
+
+### Plain CSS
+
+```css
+body {
+  font-family: var(--font-inter);
+}
+
+.heading {
+  font-family: var(--font-inter);
+  font-weight: 700; /* Uses Inter Bold variant */
+}
+
+.subheading {
+  font-family: var(--font-inter);
+  font-weight: 500; /* Uses Inter Medium variant */
+}
+```
+
+### Tailwind CSS
+
+```html
+<div class="font-inter">
+  <h1 class="font-bold text-4xl">Bold Heading</h1>
+  <h2 class="font-medium text-2xl">Medium Subheading</h2>
+  <p class="font-normal">Regular body text</p>
+</div>
+```
+
+### React/Next.js
+
+```jsx
+import './fonts.css';
+
+export default function Hero() {
+  return (
+    <section className="font-inter">
+      <h1 className="font-bold text-5xl">Welcome</h1>
+      <p className="font-normal text-lg">Self-hosted Inter font</p>
+    </section>
+  );
+}
+```
+
+## Error Handling
+
+### Font Not Found
+
+```bash
+npx nobadfonts download "InvalidFont"
+```
+
+**Output:**
+```bash
+⠋ Searching for font: InvalidFont...
+✖ Font "InvalidFont" not found.
+```
+
+### No Font Name Provided
+
+```bash
+npx nobadfonts download
+```
+
+**Output:**
+```bash
+Please specify at least one font name. Example: npx nobadfonts download "Inter" "Roboto"
+```
+
+### Already Downloaded
+
+If the font already exists in `src/fonts.css`:
+
+```bash
+⠋ Searching for font: Inter...
+✔ Found font: Inter
+⠋ Downloading font files...
+✔ Files downloaded successfully.
+ℹ Font Inter definitions already exist in src/fonts.css
+```
+
+### Download Failure
+
+If a specific font file fails to download:
+
+```bash
+Error downloading inter-Bold.woff2: Failed to download https://...
+```
+
+The CLI continues downloading other variants and formats.
+
+## Benefits vs. Add Command
+
+<CardGroup cols={2}>
+  <Card title="Self-Hosted" icon="server">
+    Complete control over font hosting
+  </Card>
+  <Card title="Offline Support" icon="wifi">
+    Works without internet connection
+  </Card>
+  <Card title="No External Dependencies" icon="link-slash">
+    No reliance on external CDNs
+  </Card>
+  <Card title="All Variants" icon="layer-group">
+    Get all font weights and styles locally
+  </Card>
+</CardGroup>
+
+## Performance Considerations
+
+<Warning>
+Downloaded fonts increase your bundle size. Consider:
+- Only downloading fonts you actively use
+- Using WOFF2 format only for modern browsers
+- Implementing font subsetting if needed
+</Warning>
+
+<Note>
+The CLI includes `font-display: swap` by default, preventing invisible text during font loading.
+</Note>
+
+## When to Use
+
+Use `download` when:
+- You need complete control over font files
+- Building offline-first applications
+- Want to avoid external CDN dependencies
+- Need all font variants for complex typography
+
+Use `add` instead when:
+- You want the fastest, lightest setup
+- External CDN dependency is acceptable
+- Repository size matters
+- You want automatic font updates
+
+## See Also
+
+<CardGroup cols={2}>
+  <Card title="add" icon="plus" href="/cli/commands/add">
+    Import fonts via CSS
+  </Card>
+  <Card title="list" icon="list" href="/cli/commands/list">
+    Browse available fonts
+  </Card>
+</CardGroup>

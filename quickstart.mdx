@@ -1,80 +1,237 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quick Start
+description: Get started with NoBadFonts in minutes - browse fonts, install the CLI, and integrate beautiful typography into your projects.
 ---
 
-## Get started in three steps
+# Quick Start
 
-Get your documentation site running locally and make your first customization.
+Get up and running with NoBadFonts in just a few minutes. This guide covers the essential steps to start using curated fonts in your projects.
 
-### Step 1: Set up your local environment
+## Browse fonts on the web
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+The fastest way to explore NoBadFonts is through the web interface at [nobadfonts.in](https://nobadfonts.in).
 
-### Step 2: Deploy your changes
+<Steps>
+  <Step title="Open the font catalog">
+    Navigate to the [Font Catalog](https://nobadfonts.in) to browse the curated collection.
+  </Step>
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+  <Step title="Filter and search">
+    Use the filter panel to narrow by category:
+    - **Sans Serif** - Clean, modern typefaces
+    - **Serif** - Traditional, editorial fonts
+    - **Display** - Bold, attention-grabbing styles
+    - **Monospace** - Fixed-width fonts for code
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+    Sort options: Trending, Popular, Editor Picks, Newest, Alphabetical
+  </Step>
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+  <Step title="Preview in context">
+    Click any font to see context-aware previews:
+    - **UI Context** - Dashboard interfaces with buttons and tooltips
+    - **Editorial Context** - Multi-column text for readability
+    - **Code Context** - Syntax-highlighted blocks
 
-### Step 3: Go live
+    Enter custom text to preview with your own content.
+  </Step>
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+  <Step title="Download or share">
+    - Click **Download** to get font files
+    - Use **Share** to create a shareable link
+    - Click the heart icon to favorite fonts
+  </Step>
+</Steps>
+
+## Install fonts with the CLI
+
+For developers, the CLI provides instant font installation from your terminal.
+
+### Installation
+
+<CodeGroup>
+
+```bash npm
+npm install -g nobadfonts-cli
+```
+
+```bash npx
+npx nobadfonts-cli
+```
+
+```bash pnpm
+pnpm add -g nobadfonts-cli
+```
+
+</CodeGroup>
+
+### Install your first font
+
+There are two ways to add fonts to your project:
+
+<Tabs>
+  <Tab title="CSS Import (Recommended)">
+    The `add` command generates a lightweight CSS import:
+
+    ```bash
+    npx nobadfonts-cli add "Inter" "Satoshi"
+    ```
+
+    This creates a `fonts.css` file that references fonts from the NoBadFonts CDN:
+
+    ```css fonts.css
+    @font-face {
+      font-family: 'Inter';
+      src: url('https://obpmvhzprzfovybfgcxs.supabase.co/storage/v1/object/public/font-files/...');
+      font-weight: 400;
+      font-style: normal;
+    }
+    /* Additional variants... */
+    ```
+
+    Import it in your project:
+
+    ```html
+    <link rel="stylesheet" href="fonts.css">
+    ```
+
+    Or in your CSS:
+
+    ```css
+    @import url('./fonts.css');
+    ```
+  </Tab>
+
+  <Tab title="Local Files">
+    The `download` command saves font files locally:
+
+    ```bash
+    npx nobadfonts-cli download "Inter" "Satoshi"
+    ```
+
+    Files are saved to `./fonts/` with this structure:
+
+    ```
+    fonts/
+    ├── inter/
+    │   ├── Inter-Regular.woff2
+    │   ├── Inter-Bold.woff2
+    │   └── Inter-Italic.woff2
+    ├── satoshi/
+    │   ├── Satoshi-Regular.woff2
+    │   └── Satoshi-Bold.woff2
+    └── fonts.css
+    ```
+
+    Use the generated CSS file to reference local fonts.
+  </Tab>
+</Tabs>
+
+### List available fonts
+
+See all curated fonts:
+
+```bash
+npx nobadfonts-cli list
+```
+
+Output:
+
+```
+Available Fonts (Top 50):
+• Inter (sans, geometric, modern)
+• Satoshi (sans, display, bold)
+• Space Grotesk (sans, monospace, technical)
+• Cabinet Grotesk (sans, display, elegant)
+...
+```
+
+## Use fonts in your project
+
+Once fonts are installed, use them in your CSS:
+
+<Tabs>
+  <Tab title="CSS">
+    ```css
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    h1 {
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 700;
+    }
+    ```
+  </Tab>
+
+  <Tab title="Tailwind CSS">
+    Add fonts to your `tailwind.config.js`:
+
+    ```js tailwind.config.js
+    module.exports = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Satoshi', 'sans-serif'],
+          },
+        },
+      },
+    }
+    ```
+
+    Use in your markup:
+
+    ```html
+    <h1 class="font-display text-4xl font-bold">
+      Beautiful Typography
+    </h1>
+    ```
+  </Tab>
+
+  <Tab title="React / Next.js">
+    Import the CSS file in your app:
+
+    ```tsx app.tsx
+    import './fonts.css';
+
+    export default function App() {
+      return (
+        <div style={{ fontFamily: 'Inter, sans-serif' }}>
+          <h1 style={{ fontFamily: 'Satoshi, sans-serif' }}>
+            Beautiful Typography
+          </h1>
+        </div>
+      );
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Available commands
+
+| Command | Description |
+|---------|-------------|
+| `add <fonts...>` | Generate CSS import for CDN-hosted fonts |
+| `download <fonts...>` | Download font files locally |
+| `list` | Display all available fonts |
 
 ## Next steps
 
-Now that you have your docs running, explore these key features:
-
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card title="Font Catalog" icon="grid" href="/features/font-catalog">
+    Explore advanced filtering and search
+  </Card>
+  <Card title="Font Tester" icon="wand-magic-sparkles" href="/features/font-tester">
+    Preview fonts in realistic contexts
+  </Card>
+  <Card title="Font Pairing" icon="layer-group" href="/features/font-pairing">
+    Create beautiful typography combinations
+  </Card>
+  <Card title="CLI Reference" icon="terminal" href="/cli/installation">
+    Learn all CLI commands and options
+  </Card>
 </CardGroup>
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+Need help? Check the [CLI Troubleshooting](/cli/troubleshooting) guide or visit the [NoBadFonts community](https://github.com/Bismay-exe/nobadfonts/discussions).
 </Note>

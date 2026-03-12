@@ -1,0 +1,218 @@
+---
+title: Font pairing playground
+description: Mix and match fonts with real-time editing to discover perfect typographic combinations
+---
+
+The font pairing playground is an interactive tool for experimenting with font combinations and building complete typographic systems.
+
+## Getting started
+
+The playground loads with two default text blocks:
+
+1. **Header block**: Large display text (72px) using Dx Lactos
+2. **Body block**: Paragraph text (18px) using Dx Gaster
+
+You can edit, add, remove, and customize these blocks to explore unlimited pairing possibilities.
+
+## Selecting fonts
+
+Click the **Edit** button on any block to open the font picker modal:
+
+1. Browse the full catalog with search and filters
+2. Click any font card to apply it to your block
+3. The modal closes automatically and your text updates
+
+The font picker shows:
+- Real-time font previews
+- Category filters
+- Sort options (trending, popular, recent)
+- Custom text preview
+- Infinite scroll for the full collection
+
+## Text blocks
+
+### Block types
+
+<Tabs>
+  <Tab title="Header">
+    Optimized for headlines and display text with:
+    - Default size: 72px
+    - Tighter line height: 1.1
+    - White text color
+    - Shorter default text for impact
+  </Tab>
+  <Tab title="Body">
+    Designed for readable paragraph text with:
+    - Default size: 18px
+    - Comfortable line height: 1.6
+    - Zinc-400 text color
+    - Longer lorem ipsum for testing
+  </Tab>
+</Tabs>
+
+### Adding blocks
+
+Add new blocks in two ways:
+
+1. **Sidebar button** (desktop): Click the **+** icon next to any block
+2. **Duplicate settings**: New blocks inherit the font, variant, and style of the block above them
+
+You can add unlimited blocks to build complex typographic hierarchies.
+
+### Removing blocks
+
+Click the **trash** icon next to any block to delete it. You must have at least one block - the last block cannot be deleted.
+
+## Customization controls
+
+Hover over any block to reveal the floating control bar:
+
+### Font selector
+
+Shows the current font name. Click to open the font picker and change the font.
+
+### Variant selector
+
+Dropdown menu to switch between font variants (Regular, Bold, Italic, etc.) when available. The menu shows all variants sorted by weight.
+
+### Typography controls
+
+Inline sliders and inputs for:
+
+<CardGroup cols={3}>
+  <Card title="Size (Sz)" icon="text-size">
+    10-200px range with numeric input
+  </Card>
+  <Card title="Line height (Lh)" icon="text-height">
+    0.5-3 range in 0.1 increments
+  </Card>
+  <Card title="Letter spacing (Ls)" icon="text-width">
+    -10px to +30px in 0.5px steps
+  </Card>
+</CardGroup>
+
+### Color picker
+
+Click the color circle to choose a custom text color. Each block has independent color control.
+
+## Background color
+
+Click the **palette** button in the bottom-left corner to change the canvas background:
+
+- **Pure black** (#000000)
+- **Zinc shades** (#09090b, #18181b, #27272a)
+- **White shades** (#ffffff, #f4f4f5, #e4e4e7)
+- **Tinted backgrounds** (subtle red, green, blue tints)
+
+Testing on different backgrounds helps evaluate contrast and versatility.
+
+## Live editing
+
+### Text editing
+
+Click directly into any text block to:
+- Type new content
+- Paste from clipboard
+- Delete or modify text
+- Use keyboard shortcuts (Cmd/Ctrl+A, Cmd/Ctrl+C, etc.)
+
+Textareas automatically resize to fit content as you type.
+
+### Real-time preview
+
+All changes apply instantly:
+- Font changes load and render immediately
+- Typography adjustments update as you drag sliders
+- Color changes show live preview
+- No save button needed - it's all live
+
+## Responsive layout
+
+The playground adapts to your screen:
+
+<Tabs>
+  <Tab title="Desktop (1024px+)">
+    - Floating control bar appears on hover
+    - Sidebar buttons for adding/removing blocks
+    - Full typography controls visible
+    - Spacious canvas with large preview area
+  </Tab>
+  <Tab title="Tablet (768-1023px)">
+    - Touch-optimized controls
+    - Compact control bar
+    - Abbreviated slider labels
+    - Moderate canvas padding
+  </Tab>
+  <Tab title="Mobile (<768px)">
+    - Control bar always visible
+    - Stacked controls for easier thumb access
+    - Minimal canvas padding
+    - Full-width blocks
+  </Tab>
+</Tabs>
+
+## Font loading
+
+Fonts load dynamically as you select them:
+
+1. Font file downloads from storage (WOFF2 preferred)
+2. Font Face API injects the font into the document
+3. Preview text updates with smooth transition
+4. Subsequent variant changes are instant (font family cached)
+
+Each block loads its own font instance with a unique font-family name: `{blockId}-font-{fontId}-{variant}`
+
+## Performance optimizations
+
+### Efficient rendering
+
+- Blocks use CSS containment for better paint performance
+- Textarea auto-resize debounced by 50ms
+- Font loading happens asynchronously
+- Layout uses CSS Grid for hardware acceleration
+
+### Smart font loading
+
+Fonts are loaded once per unique font+variant combination:
+- Duplicate fonts across blocks share the same loaded resource
+- Variant switching doesn't reload the entire font family
+- Browser font cache reduces network requests
+
+## Use cases
+
+<CardGroup cols={2}>
+  <Card title="Brand guidelines" icon="book">
+    Define your typographic system by testing header and body combinations
+  </Card>
+  <Card title="Website design" icon="browser">
+    Build multi-level heading hierarchies (H1, H2, H3) with body text
+  </Card>
+  <Card title="Marketing materials" icon="megaphone">
+    Test headline and tagline pairings for ads and campaigns
+  </Card>
+  <Card title="Type exploration" icon="compass">
+    Experiment freely with different styles to discover unexpected combinations
+  </Card>
+</CardGroup>
+
+## Tips for great pairings
+
+<Tip>
+  **Contrast is key**: Pair a bold display font with a neutral body font, or a geometric sans with a humanist serif.
+</Tip>
+
+<Tip>
+  **Test at scale**: View your pairing at actual sizes - 72px+ for headlines, 16-18px for body text.
+</Tip>
+
+<Tip>
+  **Limit your palette**: Start with 2-3 fonts maximum. Add more blocks to test hierarchy within those fonts.
+</Tip>
+
+<Tip>
+  **Check different weights**: Use variants to create hierarchy without adding more fonts.
+</Tip>
+
+<Warning>
+  Not all fonts pair well together. If two fonts compete for attention, try choosing one as the clear "display" font and the other as a supporting "text" font.
+</Warning>

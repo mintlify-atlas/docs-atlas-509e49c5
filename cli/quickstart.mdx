@@ -1,0 +1,191 @@
+---
+title: 'Quickstart'
+description: 'Get started with the NoBadFonts CLI in minutes'
+icon: 'rocket'
+---
+
+## Your First Font
+
+Install your first font in seconds using the NoBadFonts CLI.
+
+<Steps>
+  <Step title="List Available Fonts">
+    Browse the top 50 most popular fonts:
+    
+    ```bash
+    npx nobadfonts list
+    ```
+    
+    You'll see output like:
+    
+    ```bash
+    Available Fonts (Top 50):
+    • Inter (sans-serif, modern)
+    • Roboto (sans-serif, clean)
+    • Poppins (sans-serif, geometric)
+    • Montserrat (sans-serif, urban)
+    ```
+  </Step>
+  
+  <Step title="Add a Font (Lightweight CSS Import)">
+    The fastest way to use a font is via CSS import:
+    
+    ```bash
+    npx nobadfonts add "Inter"
+    ```
+    
+    This will:
+    - Create/update `src/fonts.css` with a CSS `@import`
+    - Add a Tailwind theme variable for easy usage
+    - No local file downloads needed
+  </Step>
+  
+  <Step title="Use the Font">
+    The CLI will show you how to use the font:
+    
+    ```bash
+    ✔ Imported "Inter" to src/fonts.css
+    
+    Success! To use the font:
+    1. In CSS: font-family: var(--font-inter);
+    2. In Tailwind: class="font-inter"
+    (Make sure './fonts.css' is imported in your main CSS file)
+    ```
+  </Step>
+</Steps>
+
+## Common Usage Patterns
+
+### Adding Multiple Fonts at Once
+
+Install several fonts in one command:
+
+```bash
+npx nobadfonts add "Inter" "Roboto" "Poppins"
+```
+
+Each font will be processed sequentially with visual feedback.
+
+### Downloading Fonts for Self-Hosting
+
+If you prefer to host font files locally instead of CSS imports:
+
+```bash
+npx nobadfonts download "Inter"
+```
+
+This will:
+- Download all available font variants (woff2, woff, ttf, otf)
+- Save files to `public/fonts/{font-slug}/`
+- Generate `@font-face` declarations in `src/fonts.css`
+- Create Tailwind theme variables
+
+<Note>
+The `download` command is heavier than `add` but gives you full control over font files and eliminates external dependencies.
+</Note>
+
+### Checking Available Fonts
+
+Before adding a font, verify it exists:
+
+```bash
+npx nobadfonts list
+```
+
+The list shows the top 50 fonts sorted by popularity, along with their categories.
+
+## Usage in Your Project
+
+### Plain CSS
+
+After running `add` or `download`, import the fonts file:
+
+```css src/index.css
+@import './fonts.css';
+
+body {
+  font-family: var(--font-inter);
+}
+```
+
+### Tailwind CSS
+
+Use the generated utility class:
+
+```html
+<h1 class="font-inter text-4xl">Hello World</h1>
+```
+
+### React/Next.js
+
+Import the CSS file in your app:
+
+```jsx src/App.jsx
+import './fonts.css';
+
+function App() {
+  return (
+    <div className="font-inter">
+      <h1>Hello World</h1>
+    </div>
+  );
+}
+```
+
+## CLI Shortcuts
+
+You can use either `nobadfonts-cli` or the shorter `nobadfonts` command:
+
+<CodeGroup>
+
+```bash Full name
+npx nobadfonts-cli add "Inter"
+```
+
+```bash Short alias
+npx nobadfonts add "Inter"
+```
+
+</CodeGroup>
+
+## Example Workflow
+
+Here's a complete example of setting up fonts in a new project:
+
+```bash
+# 1. Create project directory
+mkdir my-project && cd my-project
+
+# 2. Initialize npm
+npm init -y
+
+# 3. Create source directory
+mkdir src
+
+# 4. Browse available fonts
+npx nobadfonts list
+
+# 5. Add your chosen fonts
+npx nobadfonts add "Inter" "Roboto Mono"
+
+# 6. Import in your CSS
+echo '@import "./fonts.css";' > src/index.css
+```
+
+<Note>
+Font names are case-insensitive. "Inter", "inter", and "INTER" all work.
+</Note>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Commands" icon="terminal" href="/cli/commands/add">
+    Learn about all CLI commands
+  </Card>
+  <Card title="Configuration" icon="gear" href="/cli/configuration">
+    Configure environment variables
+  </Card>
+  <Card title="Troubleshooting" icon="wrench" href="/cli/troubleshooting">
+    Common issues and solutions
+  </Card>
+</CardGroup>

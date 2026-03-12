@@ -1,0 +1,459 @@
+---
+title: 'Database Schema'
+description: 'PostgreSQL schema and table structures for NoBadFonts'
+icon: 'database'
+---
+
+## Overview
+
+NoBadFonts uses **Supabase PostgreSQL** as its primary database, with Row Level Security (RLS) policies to ensure data integrity and proper access control. The schema is designed around fonts, users, and engagement metrics.
+
+## Core Tables
+
+### profiles
+
+Stores user profile information linked to Supabase Auth.
+
+<ParamField path="id" type="uuid" required>
+  Primary key. References `auth.users.id`.
+</ParamField>
+
+<ParamField path="username" type="text">
+  Unique, URL-friendly username for public profiles.
+</ParamField>
+
+<ParamField path="full_name" type="text" required>
+  User's full display name.
+</ParamField>
+
+<ParamField path="email" type="text" required>
+  User's email address (synced from auth.users).
+</ParamField>
+
+<ParamField path="role" type="enum" default="user">
+  User role: `'user'`, `'member'`, or `'admin'`.
+</ParamField>
+
+<ParamField path="membership_status" type="enum" default="none">
+  Membership application status: `'none'`, `'pending'`, `'approved'`, or `'rejected'`.
+</ParamField>
+
+<ParamField path="avatar_url" type="text">
+  URL to user's profile picture.
+</ParamField>
+
+<ParamField path="bio" type="text">
+  User biography or description.
+</ParamField>
+
+<ParamField path="website" type="text">
+  User's website URL.
+</ParamField>
+
+<ParamField path="behance" type="text">
+  Behance profile URL.
+</ParamField>
+
+<ParamField path="twitter" type="text">
+  Twitter/X handle or URL.
+</ParamField>
+
+<ParamField path="instagram" type="text">
+  Instagram handle or URL.
+</ParamField>
+
+<ParamField path="linkedin" type="text">
+  LinkedIn profile URL.
+</ParamField>
+
+<ParamField path="paypal_me" type="text">
+  PayPal.me link for donations/tips.
+</ParamField>
+
+<ParamField path="created_at" type="timestamp" default="now()">
+  Profile creation timestamp.
+</ParamField>
+
+<ParamField path="updated_at" type="timestamp">
+  Last profile update timestamp.
+</ParamField>
+
+---
+
+### fonts
+
+The primary table for font metadata.
+
+<ParamField path="id" type="uuid" required>
+  Primary key (auto-generated).
+</ParamField>
+
+<ParamField path="slug" type="text" required>
+  Unique, URL-friendly identifier (e.g., `helvetica-now-display`).
+</ParamField>
+
+<ParamField path="name" type="text" required>
+  Display name of the typeface.
+</ParamField>
+
+<ParamField path="designer" type="text" required>
+  Name of the font designer or foundry.
+</ParamField>
+
+<ParamField path="uploaded_by" type="uuid" required>
+  References `profiles.id`. The user who uploaded the font.
+</ParamField>
+
+<ParamField path="category" type="text" required>
+  Font category (e.g., `'sans-serif'`, `'serif'`, `'monospace'`, `'display'`).
+</ParamField>
+
+<ParamField path="license_type" type="text" required>
+  License type (e.g., `'Open Source'`, `'Commercial'`, `'Free for Personal Use'`).
+</ParamField>
+
+<ParamField path="tags" type="text[]">
+  Array of descriptive tags for search and filtering.
+</ParamField>
+
+<ParamField path="description" type="text">
+  Auto-generated or manual description of the font.
+</ParamField>
+
+<ParamField path="is_published" type="boolean" default="false">
+  Visibility toggle. Only published fonts appear in the catalog.
+</ParamField>
+
+<ParamField path="is_featured" type="boolean" default="false">
+  Whether the font is featured on the homepage.
+</ParamField>
+
+<ParamField path="is_trending" type="boolean" default="false">
+  Whether the font is marked as trending.
+</ParamField>
+
+<ParamField path="is_editors_pick" type="boolean" default="false">
+  Whether the font is an editor's choice.
+</ParamField>
+
+<ParamField path="woff2_url" type="text" required>
+  Primary WOFF2 file URL for web use.
+</ParamField>
+
+<ParamField path="woff_url" type="text">
+  WOFF file URL (optional fallback).
+</ParamField>
+
+<ParamField path="ttf_url" type="text">
+  TrueType (.ttf) file URL.
+</ParamField>
+
+<ParamField path="otf_url" type="text">
+  OpenType (.otf) file URL.
+</ParamField>
+
+<ParamField path="zip_url" type="text" required>
+  URL to downloadable ZIP archive containing all font files.
+</ParamField>
+
+<ParamField path="file_size_woff2" type="bigint">
+  WOFF2 file size in bytes.
+</ParamField>
+
+<ParamField path="file_size_woff" type="bigint">
+  WOFF file size in bytes.
+</ParamField>
+
+<ParamField path="file_size_ttf" type="bigint">
+  TTF file size in bytes.
+</ParamField>
+
+<ParamField path="file_size_otf" type="bigint">
+  OTF file size in bytes.
+</ParamField>
+
+<ParamField path="weights" type="integer[]">
+  Array of available font weights (e.g., `[400, 700]`).
+</ParamField>
+
+<ParamField path="has_italic" type="boolean">
+  Whether the font family includes italic variants.
+</ParamField>
+
+<ParamField path="glyph_count" type="integer">
+  Total number of glyphs in the font.
+</ParamField>
+
+<ParamField path="preview_image_url" type="text">
+  URL to social sharing/preview image.
+</ParamField>
+
+<ParamField path="file_size_image_preview" type="bigint">
+  Preview image size in bytes.
+</ParamField>
+
+<ParamField path="gallery_images" type="text[]">
+  Array of URLs to additional gallery images.
+</ParamField>
+
+<ParamField path="gallery_image_sizes" type="bigint[]">
+  Corresponding file sizes for gallery images.
+</ParamField>
+
+<ParamField path="downloads" type="integer" default="0">
+  Total number of downloads (all time).
+</ParamField>
+
+<ParamField path="downloads_7d" type="integer" default="0">
+  Downloads in the last 7 days.
+</ParamField>
+
+<ParamField path="favorites_count" type="integer" default="0">
+  Number of users who favorited this font.
+</ParamField>
+
+<ParamField path="commercial_use" type="boolean">
+  Whether the font is licensed for commercial use.
+</ParamField>
+
+<ParamField path="created_at" type="timestamp" default="now()">
+  Font creation timestamp.
+</ParamField>
+
+<ParamField path="updated_at" type="timestamp">
+  Last update timestamp.
+</ParamField>
+
+---
+
+### font_variants
+
+Stores individual font weight/style variants.
+
+<ParamField path="id" type="uuid" required>
+  Primary key (auto-generated).
+</ParamField>
+
+<ParamField path="font_id" type="uuid" required>
+  Foreign key to `fonts.id`.
+</ParamField>
+
+<ParamField path="variant_name" type="text" required>
+  Human-readable variant name (e.g., `'Bold Italic'`, `'Light'`).
+</ParamField>
+
+<ParamField path="woff2_url" type="text">
+  Direct CDN link to the WOFF2 variant file.
+</ParamField>
+
+<ParamField path="woff_url" type="text">
+  Direct CDN link to the WOFF variant file.
+</ParamField>
+
+<ParamField path="ttf_url" type="text">
+  Direct CDN link to the TTF variant file.
+</ParamField>
+
+<ParamField path="otf_url" type="text">
+  Direct CDN link to the OTF variant file.
+</ParamField>
+
+<ParamField path="file_size_woff2" type="bigint">
+  WOFF2 file size in bytes for analytics.
+</ParamField>
+
+<ParamField path="file_size_woff" type="bigint">
+  WOFF file size in bytes.
+</ParamField>
+
+<ParamField path="file_size_ttf" type="bigint">
+  TTF file size in bytes.
+</ParamField>
+
+<ParamField path="file_size_otf" type="bigint">
+  OTF file size in bytes.
+</ParamField>
+
+<ParamField path="order_index" type="integer">
+  Sort order for displaying variants.
+</ParamField>
+
+<ParamField path="created_at" type="timestamp" default="now()">
+  Variant creation timestamp.
+</ParamField>
+
+<Note>
+  Font variants are uploaded through the multi-stage upload pipeline and automatically organized in storage as: `{userId}/{fontSlug}/variants/{variantName}/{filename}`
+</Note>
+
+---
+
+### favorites
+
+Tracks user favorites/likes for fonts.
+
+<ParamField path="id" type="uuid" required>
+  Primary key (auto-generated).
+</ParamField>
+
+<ParamField path="user_id" type="uuid" required>
+  References `profiles.id`.
+</ParamField>
+
+<ParamField path="font_id" type="uuid" required>
+  References `fonts.id`.
+</ParamField>
+
+<ParamField path="created_at" type="timestamp" default="now()">
+  Timestamp when the font was favorited.
+</ParamField>
+
+<Note>
+  A database trigger automatically updates `fonts.favorites_count` when rows are inserted or deleted.
+</Note>
+
+---
+
+### downloads
+
+Tracks font download events for analytics.
+
+<ParamField path="id" type="uuid" required>
+  Primary key (auto-generated).
+</ParamField>
+
+<ParamField path="font_id" type="uuid" required>
+  References `fonts.id`.
+</ParamField>
+
+<ParamField path="user_id" type="uuid">
+  Optional reference to `profiles.id` (null for anonymous downloads).
+</ParamField>
+
+<ParamField path="downloaded_at" type="timestamp" default="now()">
+  Timestamp of the download event.
+</ParamField>
+
+<Note>
+  A database trigger updates `fonts.downloads` and `fonts.downloads_7d` counters automatically.
+</Note>
+
+---
+
+## Database Functions
+
+Supabase provides custom PostgreSQL functions for advanced queries:
+
+### search_fonts
+
+```sql
+search_fonts(
+  query text DEFAULT '',
+  filter_category text DEFAULT NULL,
+  sort_by text DEFAULT 'trending'
+)
+```
+
+Performs full-text search across font names, designers, and tags with optional category filtering and sorting.
+
+**Returns:** Array of font objects with all related data.
+
+### update_downloads_count
+
+Trigger function that increments download counters when a new row is inserted into `downloads`.
+
+### update_favorites_count
+
+Trigger function that updates the `favorites_count` column when favorites are added or removed.
+
+---
+
+## Row Level Security (RLS)
+
+NoBadFonts enforces strict access control using Supabase RLS policies:
+
+### profiles
+
+- **Read**: Public profiles are readable by anyone
+- **Update**: Users can only update their own profile
+- **Admin**: Full access to all profiles
+
+### fonts
+
+- **Read**: Published fonts are visible to everyone; unpublished fonts are only visible to the uploader and admins
+- **Insert**: Authenticated users can upload fonts
+- **Update**: Users can edit their own fonts; admins have global edit rights
+- **Delete**: Users can delete their own fonts; admins can delete any font
+
+### font_variants
+
+- **Access**: Inherits permissions from the parent font
+
+### favorites & downloads
+
+- **Insert**: Authenticated users can favorite/download fonts
+- **Delete**: Users can only remove their own favorites
+
+<Warning>
+  All database operations from the client are subject to RLS policies. Backend operations via Supabase Edge Functions use the service role key to bypass RLS when needed.
+</Warning>
+
+---
+
+## Storage Buckets
+
+NoBadFonts uses Supabase Storage for file management:
+
+### Font Files
+
+Structured storage layout:
+```
+{userId}/{fontSlug}/variants/{variantName}/{filename}
+```
+
+**Example:**
+```
+550e8400-e29b-41d4-a716-446655440000/
+  helvetica-now-display/
+    variants/
+      bold/
+        HelveticaNowDisplay-Bold.woff2
+        HelveticaNowDisplay-Bold.ttf
+      italic/
+        HelveticaNowDisplay-Italic.woff2
+```
+
+### Image Gallery
+
+Preview images and social sharing cards are stored in a separate bucket with public read access.
+
+---
+
+## TypeScript Types
+
+The database schema is fully typed using generated TypeScript definitions:
+
+```typescript
+import type { Database } from '@/types/database.types';
+
+type Font = Database['public']['Tables']['fonts']['Row'];
+type Profile = Database['public']['Tables']['profiles']['Row'];
+type FontVariant = Database['public']['Tables']['font_variants']['Row'];
+```
+
+<Tip>
+  Run `supabase gen types typescript` to regenerate types after schema changes.
+</Tip>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="lock" href="/developers/authentication">
+    Learn how user authentication is handled
+  </Card>
+  <Card title="Setup Guide" icon="code" href="/developers/setup">
+    Set up the development environment
+  </Card>
+</CardGroup>

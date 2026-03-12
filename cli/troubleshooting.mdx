@@ -1,0 +1,495 @@
+---
+title: 'Troubleshooting'
+description: 'Common issues and solutions for the NoBadFonts CLI'
+icon: 'wrench'
+---
+
+## Connection Issues
+
+### Error: "Failed to fetch" or "Error fetching fonts"
+
+**Symptoms:**
+```bash
+⠋ Fetching available fonts...
+✖ Error fetching fonts: Failed to fetch
+```
+
+**Causes and Solutions:**
+
+<AccordionGroup>
+  <Accordion title="Missing Environment Variables">
+    **Cause:** `SUPABASE_URL` or `SUPABASE_ANON_KEY` not set.
+    
+    **Solution:**
+    1. Create a `.env` file in your project root:
+    ```bash
+    touch .env
+    ```
+    
+    2. Add your credentials:
+    ```bash .env
+    SUPABASE_URL=https://your-project.supabase.co
+    SUPABASE_ANON_KEY=your_anon_key_here
+    ```
+    
+    3. Verify they're set:
+    ```bash
+    echo $SUPABASE_URL
+    ```
+  </Accordion>
+  
+  <Accordion title="Network Connection">
+    **Cause:** No internet connection or firewall blocking requests.
+    
+    **Solution:**
+    1. Test connectivity:
+    ```bash
+    ping supabase.co
+    ```
+    
+    2. Check firewall settings
+    3. Try from a different network
+    4. Verify corporate proxy settings
+  </Accordion>
+  
+  <Accordion title="Invalid Supabase URL">
+    **Cause:** Malformed or incorrect Supabase URL.
+    
+    **Solution:**
+    URL must match this format:
+    ```
+    https://[project-id].supabase.co
+    ```
+    
+    Common mistakes:
+    - Missing `https://`
+    - Trailing slash: `https://project.supabase.co/` ❌
+    - Wrong domain: `.supabase.com` instead of `.supabase.co`
+  </Accordion>
+</AccordionGroup>
+
+## Authentication Issues
+
+### Error: "401 Unauthorized"
+
+**Symptoms:**
+```bash
+⠋ Searching for font: Inter...
+✖ Error fetching fonts: 401 Unauthorized
+```
+
+**Solutions:**
+
+<Steps>
+  <Step title="Verify API Key">
+    Check that your `SUPABASE_ANON_KEY` is correct:
+    
+    ```bash
+    echo $SUPABASE_ANON_KEY
+    ```
+    
+    It should be a long JWT token starting with `eyJhbGc...`
+  </Step>
+  
+  <Step title="Use Anonymous Key (Not Service Role)">
+    The CLI requires the **anonymous (public) key**, not the service role key.
+    
+    Find it in Supabase Dashboard:
+    - Project Settings → API
+    - Look for "anon" / "public" key
+  </Step>
+  
+  <Step title="Check API Permissions">
+    Ensure your Supabase project allows anonymous access to the fonts table.
+    
+    Verify Row Level Security (RLS) policies in Supabase.
+  </Step>
+</Steps>
+
+## Font Not Found Issues
+
+### Error: "Font not found"
+
+**Symptoms:**
+```bash
+⠋ Searching for font: MyFont...
+✖ Font "MyFont" not found.
+```
+
+**Solutions:**
+
+<CardGroup cols={2}>
+  <Card title="Check Exact Name" icon="spell-check">
+    Run `npx nobadfonts list` to see available fonts and copy the exact name
+  </Card>
+  <Card title="Try Different Cases" icon="a">
+    Font names are case-insensitive, but try: "Inter", "inter", or "INTER"
+  </Card>
+  <Card title="Check Spelling" icon="pen">
+    Common mistakes: "Roboto" not "Roboto Sans", "Inter" not "Inter UI"
+  </Card>
+  <Card title="Browse Online" icon="globe">
+    Visit [nobadfonts.in](https://nobadfonts.in) to verify the font exists
+  </Card>
+</CardGroup>
+
+## File System Issues
+
+### Error: "EACCES: permission denied"
+
+**Symptoms:**
+```bash
+Error: EACCES: permission denied, mkdir '/src/fonts.css'
+```
+
+**Solutions:**
+
+<AccordionGroup>
+  <Accordion title="Run from Project Root">
+    The CLI expects to be run from your project's root directory where `src/` exists.
+    
+    ```bash
+    cd /path/to/your/project
+    npx nobadfonts add "Inter"
+    ```
+  </Accordion>
+  
+  <Accordion title="Create src/ Directory">
+    If `src/` doesn't exist, create it:
+    
+    ```bash
+    mkdir src
+    npx nobadfonts add "Inter"
+    ```
+  </Accordion>
+  
+  <Accordion title="Check Permissions">
+    Verify you have write permissions:
+    
+    ```bash
+    ls -la src/
+    ```
+    
+    If needed, fix permissions:
+    ```bash
+    chmod -R u+w src/
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Error: "ENOENT: no such file or directory"
+
+**Cause:** CLI trying to write to a directory that doesn't exist.
+
+**Solution:**
+Create required directories:
+
+```bash
+mkdir -p src
+mkdir -p public/fonts
+```
+
+## CSS Import Issues
+
+### Fonts Not Loading in Browser
+
+**Symptoms:**
+- CSS imported successfully
+- No errors in CLI
+- Fonts don't appear in browser
+
+**Solutions:**
+
+<Steps>
+  <Step title="Import fonts.css in Main CSS">
+    Ensure `fonts.css` is imported in your main CSS file:
+    
+    ```css src/index.css
+    @import './fonts.css';
+    
+    body {
+      font-family: var(--font-inter);
+    }
+    ```
+  </Step>
+  
+  <Step title="Check Browser DevTools">
+    Open DevTools (F12) → Network tab:
+    - Look for CSS file requests
+    - Check for 404 errors
+    - Verify font files are loading
+  </Step>
+  
+  <Step title="Clear Browser Cache">
+    Hard refresh to clear cached stylesheets:
+    - Chrome/Edge: `Ctrl+Shift+R` (Windows) or `Cmd+Shift+R` (Mac)
+    - Firefox: `Ctrl+F5` (Windows) or `Cmd+Shift+R` (Mac)
+  </Step>
+  
+  <Step title="Verify CSS Variable Names">
+    Check that you're using the correct variable:
+    
+    ```css
+    /* Correct */
+    font-family: var(--font-inter);
+    
+    /* Incorrect */
+    font-family: var(--Inter);
+    font-family: var(--font-Inter);
+    ```
+  </Step>
+</Steps>
+
+### CORS Issues with Downloaded Fonts
+
+**Symptoms:**
+```
+Access to font at 'file:///fonts/inter/inter.woff2' has been blocked by CORS policy
+```
+
+**Solution:**
+Fonts must be served via HTTP(S), not file:// protocol. Use a local development server:
+
+<CodeGroup>
+
+```bash Using Vite
+npm create vite@latest
+npm run dev
+```
+
+```bash Using Python
+python -m http.server 8000
+```
+
+```bash Using Node.js
+npx http-server
+```
+
+```bash Using PHP
+php -S localhost:8000
+```
+
+</CodeGroup>
+
+## Tailwind CSS Issues
+
+### Font Utility Classes Not Working
+
+**Symptoms:**
+```html
+<div class="font-inter">Text not styled</div>
+```
+
+**Solutions:**
+
+<AccordionGroup>
+  <Accordion title="Import fonts.css in Main CSS">
+    Make sure `fonts.css` is imported **before** Tailwind directives:
+    
+    ```css src/index.css
+    @import './fonts.css';
+    
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+    ```
+  </Accordion>
+  
+  <Accordion title="Rebuild Tailwind">
+    Regenerate Tailwind CSS:
+    
+    ```bash
+    npm run build
+    ```
+    
+    Or restart your dev server:
+    ```bash
+    npm run dev
+    ```
+  </Accordion>
+  
+  <Accordion title="Check @theme Block">
+    Verify the `@theme` block exists in `fonts.css`:
+    
+    ```css src/fonts.css
+    @theme {
+      --font-inter: "Inter", sans-serif;
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Manually Configure Tailwind (Alternative)">
+    If `@theme` doesn't work, manually extend Tailwind config:
+    
+    ```js tailwind.config.js
+    module.exports = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'inter': ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Command Issues
+
+### Error: "command not found: nobadfonts"
+
+**Cause:** CLI not installed globally, or PATH not configured.
+
+**Solutions:**
+
+<Tabs>
+  <Tab title="Use npx (Recommended)">
+    Always use `npx` to run without global install:
+    
+    ```bash
+    npx nobadfonts-cli list
+    ```
+  </Tab>
+  
+  <Tab title="Install Globally">
+    Install globally and add to PATH:
+    
+    ```bash
+    npm install -g nobadfonts-cli
+    ```
+    
+    Verify installation:
+    ```bash
+    nobadfonts --version
+    ```
+  </Tab>
+</Tabs>
+
+### CLI Hangs or Freezes
+
+**Symptoms:**
+- Spinner keeps spinning indefinitely
+- No output or error messages
+
+**Solutions:**
+
+1. **Check network connection** - Slow/timeout responses from API
+2. **Cancel and retry** - Press `Ctrl+C` and run again
+3. **Increase timeout** - API may be slow; wait 30-60 seconds
+4. **Check API status** - Verify Supabase is operational
+
+## Version Issues
+
+### Outdated CLI Version
+
+**Symptoms:**
+- Features mentioned in docs don't work
+- Unexpected behavior
+
+**Solution:**
+
+Update to latest version:
+
+<CodeGroup>
+
+```bash Using npx
+# npx always uses latest - no update needed
+npx nobadfonts-cli@latest list
+```
+
+```bash Global Install
+npm update -g nobadfonts-cli
+```
+
+```bash Check Version
+npm list -g nobadfonts-cli
+```
+
+</CodeGroup>
+
+### Node.js Version Too Old
+
+**Symptoms:**
+```
+SyntaxError: Cannot use import statement outside a module
+```
+
+**Solution:**
+Upgrade to Node.js 14 or higher:
+
+```bash
+node --version  # Should be v14.0.0 or higher
+```
+
+Download latest from [nodejs.org](https://nodejs.org)
+
+## Debugging Tips
+
+<CardGroup cols={2}>
+  <Card title="Enable Verbose Output" icon="terminal">
+    Run with Node.js debugging:
+    ```bash
+    NODE_DEBUG=* npx nobadfonts list
+    ```
+  </Card>
+  
+  <Card title="Check Current Directory" icon="folder">
+    Verify you're in the right place:
+    ```bash
+    pwd
+    ls -la
+    ```
+  </Card>
+  
+  <Card title="Test API Manually" icon="code">
+    Test Supabase directly:
+    ```bash
+    curl "${SUPABASE_URL}/rest/v1/fonts?limit=1" \
+      -H "apikey: ${SUPABASE_ANON_KEY}"
+    ```
+  </Card>
+  
+  <Card title="Read CLI Source" icon="file-code">
+    The CLI is open source - check `index.js` for implementation details
+  </Card>
+</CardGroup>
+
+## Getting Help
+
+If you're still experiencing issues:
+
+<Steps>
+  <Step title="Check Documentation">
+    Review [Configuration](/cli/configuration) and [Quickstart](/cli/quickstart) guides
+  </Step>
+  
+  <Step title="Search GitHub Issues">
+    Check if others have encountered the same issue:
+    [github.com/nobadfonts/cli/issues](https://github.com)
+  </Step>
+  
+  <Step title="Create Issue">
+    Report bugs with:
+    - Full error message
+    - CLI command used
+    - Node.js version (`node --version`)
+    - Operating system
+    - Steps to reproduce
+  </Step>
+</Steps>
+
+<Note>
+Before reporting issues, try running with `npx nobadfonts-cli@latest` to ensure you're using the latest version.
+</Note>
+
+## See Also
+
+<CardGroup cols={2}>
+  <Card title="Configuration" icon="gear" href="/cli/configuration">
+    Set up environment variables
+  </Card>
+  <Card title="Installation" icon="download" href="/cli/installation">
+    Install and verify the CLI
+  </Card>
+</CardGroup>
