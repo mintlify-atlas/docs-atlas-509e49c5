@@ -38,7 +38,9 @@
               "features/font-tester",
               "features/font-pairing",
               "features/upload-system",
-              "features/mobile-apps"
+              "features/mobile-apps",
+              "features/community",
+              "features/pricing"
             ]
           },
           {

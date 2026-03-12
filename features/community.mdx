@@ -1,0 +1,249 @@
+---
+title: Community & members
+description: Join the NoBadFonts community to upload fonts, connect with designers, and showcase your work.
+icon: users
+---
+
+# Community & members
+
+NoBadFonts is more than a font library—it's a community of designers who care about typography quality. Members can upload fonts, build profiles, and connect with other type designers.
+
+## User roles
+
+The platform has three user roles with different capabilities:
+
+<CardGroup cols={3}>
+  <Card title="User" icon="user">
+    Basic account with browsing and download access
+  </Card>
+  <Card title="Member" icon="shield-check">
+    Approved contributor who can upload fonts
+  </Card>
+  <Card title="Admin" icon="crown">
+    Platform moderator with curation rights
+  </Card>
+</CardGroup>
+
+### User
+
+Anyone who creates an account starts as a **User**. Users can:
+
+- ✅ Browse the full font catalog
+- ✅ Download fonts for personal use
+- ✅ Use the font tester and pairing tools
+- ✅ Favorite fonts and track downloads
+- ✅ Apply for membership
+- ❌ Upload fonts
+- ❌ Edit font metadata
+
+### Member
+
+**Members** are verified contributors who have been approved to upload fonts. Members can:
+
+- ✅ Everything a User can do, plus:
+- ✅ Upload new fonts to the catalog
+- ✅ Manage their uploaded fonts
+- ✅ Add banner galleries to font pages
+- ✅ Update font metadata and tags
+- ✅ Appear in the members directory
+- ✅ Have a public profile page
+- ❌ Modify other members' fonts
+- ❌ Access admin tools
+
+<Note>
+To become a Member, you must apply and be approved by an admin. This ensures font quality and prevents spam.
+</Note>
+
+### Admin
+
+**Admins** are platform moderators who curate the catalog. Admins can:
+
+- ✅ Everything a Member can do, plus:
+- ✅ Approve or reject membership applications
+- ✅ Edit any font's metadata
+- ✅ Mark fonts as featured, trending, or editor's picks
+- ✅ Publish or unpublish fonts
+- ✅ Access the admin dashboard
+- ✅ Promote users to member status
+- ✅ Run database maintenance tools
+
+## Membership application
+
+To upload fonts, you need to apply for membership:
+
+<Steps>
+  <Step title="Create an account">
+    Sign up with your email or Google account at [nobadfonts.in/auth](https://nobadfonts.in/auth).
+  </Step>
+
+  <Step title="Complete your profile">
+    Add your profile information:
+    - Full name
+    - Username
+    - Bio
+    - Profile picture
+    - Portfolio links (Behance, Dribbble, Instagram, etc.)
+
+    A complete profile helps admins understand your design background.
+  </Step>
+
+  <Step title="Apply for membership">
+    Navigate to your profile page and click **Apply for Membership**.
+
+    Your application will be reviewed by an admin, typically within 2-3 business days.
+  </Step>
+
+  <Step title="Membership status">
+    Your profile will show one of four membership statuses:
+
+    <AccordionGroup>
+      <Accordion title="None">
+        You haven't applied for membership yet. Continue using the platform as a User.
+      </Accordion>
+
+      <Accordion title="Pending">
+        Your application is under review by an admin. You'll receive an email when a decision is made.
+      </Accordion>
+
+      <Accordion title="Approved">
+        Congratulations! Your role has been upgraded to **Member**. You can now upload fonts.
+      </Accordion>
+
+      <Accordion title="Rejected">
+        Your application was not approved at this time. Admins may provide feedback. You can reapply after improving your portfolio or profile.
+      </Accordion>
+    </AccordionGroup>
+  </Step>
+</Steps>
+
+<Tip>
+To increase your chances of approval, showcase existing type design work in your portfolio links and write a thoughtful bio explaining your interest in typography.
+</Tip>
+
+## Member directory
+
+The [Members page](https://nobadfonts.in/members) showcases all approved contributors:
+
+**Features:**
+- Grid view of member profiles with avatars
+- Links to each member's portfolio and social profiles
+- Filter by activity or alphabetically
+- View fonts uploaded by each member
+
+**Member profile pages** (`/members/:id`) show:
+- Full bio and contact information
+- Portfolio and social links (Behance, Twitter, Instagram, LinkedIn)
+- All fonts uploaded by that member
+- Contributor statistics (total fonts, total downloads)
+
+## Designer pages
+
+Each font designer has a dedicated page at `/designers/:designerName`:
+
+- **Fonts by designer** - View all fonts from a specific designer
+- **Designer bio** - Learn about the type designer's background
+- **Links** - Visit the designer's portfolio or website
+
+<Note>
+Designer pages are automatically created when fonts are uploaded. The designer name comes from the font metadata.
+</Note>
+
+## Community guidelines
+
+To maintain quality and respect, all members must follow these guidelines:
+
+### Font uploads
+
+- **Quality first** - Only upload production-ready fonts with complete character sets
+- **Proper licensing** - Ensure you have rights to distribute the font
+- **Accurate metadata** - Provide correct designer names, categories, and tags
+- **No duplicates** - Check if a font already exists before uploading
+
+### Respectful conduct
+
+- **Be professional** - Treat other members with respect
+- **Give credit** - Always attribute the original designer
+- **No spam** - Don't upload low-quality or test fonts
+- **Report issues** - Flag problematic content to admins
+
+<Warning>
+Violating community guidelines may result in membership revocation and account suspension.
+</Warning>
+
+## Profile customization
+
+Members can customize their public profiles:
+
+**Basic information:**
+- Full name
+- Username (appears in URLs)
+- Email (private, only for notifications)
+- Bio (Markdown supported)
+- Avatar image
+
+**Social links:**
+- Website
+- Behance
+- Twitter / X
+- Instagram
+- LinkedIn
+- PayPal.me (for donations)
+
+**Privacy:**
+- All profile fields except email are publicly visible
+- Users can update their profile anytime via the `/profile` page
+
+## Statistics & analytics
+
+Member profiles display contributor statistics:
+
+- **Total fonts uploaded**
+- **Total downloads across all fonts**
+- **Favorite count** (total favorites on your fonts)
+- **Recent activity** (uploads, updates)
+
+<Tip>
+These metrics help designers showcase their impact on the community.
+</Tip>
+
+## Admin dashboard
+
+Admins have access to a dashboard at `/admin` with tools for:
+
+**User management:**
+- View all users and their roles
+- Approve or reject membership applications
+- Promote users to member status
+- View pending applications
+
+**Font curation:**
+- Mark fonts as featured, trending, or editor's picks
+- Publish or unpublish fonts
+- Run WOFF2 scanner to fix missing file URLs
+- Bulk edit metadata
+
+**Platform statistics:**
+- Total users, members, and fonts
+- Recent uploads and downloads
+- Most popular fonts this week
+
+<Note>
+Admin access is granted manually by existing admins. Contact the project maintainer if you're interested in helping moderate the platform.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Apply for membership" icon="user-plus" href="https://nobadfonts.in/profile">
+    Start uploading fonts
+  </Card>
+  <Card title="Upload fonts" icon="upload" href="/features/upload-system">
+    Learn the upload process
+  </Card>
+  <Card title="Browse members" icon="users" href="https://nobadfonts.in/members">
+    Meet the community
+  </Card>
+  <Card title="Database schema" icon="database" href="/developers/database-schema">
+    See how profiles are stored
+  </Card>
+</CardGroup>
